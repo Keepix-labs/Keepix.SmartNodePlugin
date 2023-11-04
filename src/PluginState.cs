@@ -3,26 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Keepix.SmartNodePlugin.Storage;
+using Keepix.SmartNodePlugin.Utils;
 
 namespace Keepix.SmartNodePlugin
 {
-    internal class PluginState
+    public enum PluginStateEnum {
+        NO_STATE,
+        STARTING_INSTALLATION,
+        INSTALLING_CLI,
+        INSTALLING_NODE,
+        CONFIGURING_NODE,
+        STARTING_NODE,
+        NODE_RUNNING,
+        SETUP_ERROR_STATE,
+    }
+
+    internal class PluginStateManager
     {
-        public const string PLUGIN_STATE_IDLE = "IDLE";
-        public const string PLUGIN_STATE_RUNNING = "RUNNING";
-        public const string PLUGIN_STATE_INSTALL = "INSTALL";
-        public const string PLUGIN_STATE_INSTALL_DOCKER = "INSTALL_DOCKER_IMAGES";
+        public PluginStateEnum State { get; set; }
+        public JsonObjectStore DB { get; set; }
 
-        public string? State { get; set; }
-        public float? Progress { get; set; }
-
-        public static PluginState GetNewEmptyState()
+        public static PluginStateManager LoadStateManager()
         {
-            return new PluginState()
-            {
-                State = PLUGIN_STATE_IDLE,
-                Progress = 0f
+            string dataFolder = "./data";
+            if (!Directory.Exists(dataFolder)) {
+                try { Directory.CreateDirectory(dataFolder); } catch (Exception) {}
+            }
+            var currentDir = Directory.GetCurrentDirectory();
+            string dbPath = Path.Combine(currentDir, "data/db.store");
+
+            var stateManager = new PluginStateManager() {
+                DB = new JsonObjectStore(dbPath)
             };
+            try {
+                stateManager.State = stateManager.DB.Retrieve<PluginStateEnum>("STATE");
+            } 
+            catch (Exception) {
+                stateManager.State = PluginStateEnum.NO_STATE;
+            }
+            return stateManager;
+        }
+
+        public static PluginStateManager GetStateManager()
+        {
+            return LoadStateManager();
         }
     }
 }

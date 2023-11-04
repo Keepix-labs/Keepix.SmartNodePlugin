@@ -107,5 +107,24 @@ namespace Keepix.SmartNodePlugin.Services
 
             return true;
         }
+
+        public static bool RemoveNode()
+        {
+
+            Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");
+            Shell.ExecuteCommand("docker stop keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_mev-boost keepix_grafana keepix_prometheus");
+            Shell.ExecuteCommand("docker rm keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_mev-boost keepix_grafana keepix_prometheus");
+            
+              ShellCondition conditions = new ShellCondition()
+                {
+                    content = "Are you sure you want to continue",
+                    answers = new string[] {"y", ""}
+                };
+            Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
+
+            // Shell.ExecuteCommand("rm -rf ~/.rocketpool");
+            Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
+            return true;
+        }
     }
 }

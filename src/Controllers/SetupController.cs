@@ -11,16 +11,26 @@ namespace Keepix.SmartNodePlugin.Controllers
 {
     internal class SetupController
     {
-        // THIS PLUGIN ONLY WORKS WITH LINUX OR OSX AS ROCKETPOOL IS NOT COMPATIBLE WITH WINDOWS OS
+        private static PluginStateManager stateManager;
+
+        // THIS PLUGIN ONLY WORKS WITH LINUX OR OSX OR WSL2 WINDOWS AS ROCKETPOOL IS NOT COMPATIBLE WITH WINDOWS OS
         [KeepixPluginFn("install")]
         public static async Task<bool> OnInstall(InstallInput input)
         {
+            stateManager = PluginStateManager.GetStateManager();
+            if (stateManager.State != PluginStateEnum.NO_STATE) {
+                Console.WriteLine("The smart-node is already in a running state or the installation failed, please uninstall first before a new installation. USE WITH CAUTION.");
+                return false;
+            }
+
+            stateManager.DB.Store("STATE", PluginStateEnum.STARTING_INSTALLATION);
 
             //  SETUP CLI START //
             bool cliReady;
             if (!SetupService.isCliInstalled())
             {
                 Console.WriteLine("Need to install RPL CLI to this machine...");
+                stateManager.DB.Store("STATE", PluginStateEnum.INSTALLING_CLI);
                 cliReady = SetupService.DownloadCli();
                 if (cliReady) {
                     Console.WriteLine("CLI successfully installed");
@@ -33,8 +43,8 @@ namespace Keepix.SmartNodePlugin.Controllers
             }
             // SETUP CLI END //
 
-
             // SETUP SMART NODE START //
+            stateManager.DB.Store("STATE", PluginStateEnum.INSTALLING_NODE);
             string error = SetupService.InstallSmartNode();
             if (!string.IsNullOrEmpty(error))
             {
@@ -42,26 +52,54 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             Console.WriteLine("RPL Service installed sucessfully");
+            stateManager.DB.Store("STATE", PluginStateEnum.CONFIGURING_NODE);
             //Setting up smart node config before starting up the node
             error = SetupService.ConfigSmartNode();
             if (string.IsNullOrEmpty(error)) {
                 Console.WriteLine("Smartnode configured correctly with Nimbus and Nethermind, starting the smart node...");
+                stateManager.DB.Store("STATE", PluginStateEnum.STARTING_NODE);
                 error = SetupService.StartSmartNode();
                 if (string.IsNullOrEmpty(error)) {
-                    Console.WriteLine("SmartNode successfully started, congratulations on installing your first blockchain node!");
+                    stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
+                    Console.WriteLine("SmartNode successfully started, congratulations on installing your first Ethereum blockchain node!");
                 }
                 else
                 {
                     Console.WriteLine("Error while trying to trying to start the smartnode: " + error);
+                    return false;
                 }
             }
             else
             {
                 Console.WriteLine("Error while trying to config the rocketpool smartnode: " + error);
+                return false;
             }
             // SETUP SMART NODE END //
 
 
+            return true;
+        }
+
+        [KeepixPluginFn("uninstall")]
+        public static async Task<bool> OnUninstall()
+        {
+            try
+            {
+                stateManager = PluginStateManager.GetStateManager();
+                  if (stateManager.State == PluginStateEnum.NO_STATE) {
+                    Console.WriteLine("The smart-node is not installed!");
+                    return false;
+                }
+
+                SetupService.RemoveNode();
+                stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
+                Console.WriteLine("Smart-node successfully uninstalled");
+            }
+            catch (Exception) 
+            {
+                Console.WriteLine("Error while trying to uninstall the Smartnode, please do it manually or contact Keepix team.");
+                return false;   
+            }
             return true;
         }
     }
