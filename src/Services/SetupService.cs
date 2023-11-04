@@ -19,6 +19,30 @@ namespace Keepix.SmartNodePlugin.Services
             }
         }
 
+        public static string StartSmartNode()
+        {
+            string result = string.Empty;
+            try
+            {
+                // this will wait for this text prompted to move onto the next step
+                ShellCondition conditions = new ShellCondition()
+                {
+                    content = "Press y when you understand the above warning",
+                    answers = new string[] {"y", ""}
+                };
+
+                result = Shell.ExecuteCommand("~/bin/rocketpool service start --yes", new List<ShellCondition>() { conditions } );
+                if (result.Contains("You currently have Doppelganger Protection enabled") || result.Contains("Running"))
+                    return string.Empty;
+                return result;
+            }
+            catch (Exception)
+            {
+                return result;
+            }
+        }
+
+
         public static string InstallSmartNode()
         {
             string result = string.Empty;

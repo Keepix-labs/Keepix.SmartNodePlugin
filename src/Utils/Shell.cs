@@ -1,14 +1,22 @@
+using System;
 using System.Diagnostics;
 
 namespace Keepix.SmartNodePlugin.Utils
 {
+    public class ShellCondition
+    {
+        public string content;
+        public string[] answers;
+    }
+
     public static class Shell
     {
-       public static string ExecuteCommand(string command)
+        public static string ExecuteCommand(string command, List<ShellCondition>? conditions = null)
         {
             var processInfo = new ProcessStartInfo("bash", $"-c \"{command}\"")
             {
                 RedirectStandardOutput = true,
+                RedirectStandardInput = true, // Enable input redirection
                 UseShellExecute = false,
                 CreateNoWindow = true,
             };
@@ -19,13 +27,43 @@ namespace Keepix.SmartNodePlugin.Utils
             };
 
             process.Start();
-            string output = process.StandardOutput.ReadToEnd();
+            string output = string.Empty;
+            if (conditions != null && conditions.Count > 0)
+            {
+                foreach (var condition in conditions)
+                {
+                    var retry = 0;
+                    while (!process.StandardOutput.ReadLine().Contains(condition.content) && retry < 10)
+                    {
+                        foreach (var answer in condition.answers) {
+
+                            if (answer.Length > 0) {
+                                process.StandardInput.WriteLine(answer);
+                            }
+                            else
+                            {
+                                process.StandardInput.WriteLine(); // in case we just need to send an empty entry to be processed
+                            }
+ 
+                            Thread.Sleep(500);
+                        }
+
+                        Thread.Sleep(1000);
+                        retry++;
+                    }
+                }
+                // After sending tasks, we add a delay to ensure the input is processed
+                Thread.Sleep(1000);
+            }
+
+            output += process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
             if (process.ExitCode != 0)
             {
                 throw new Exception(output);
             }
+
             return output;
         }
     }

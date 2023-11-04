@@ -45,8 +45,15 @@ namespace Keepix.SmartNodePlugin.Controllers
             //Setting up smart node config before starting up the node
             error = SetupService.ConfigSmartNode();
             if (string.IsNullOrEmpty(error)) {
-                //TODO: Start node to init sync process!
-                Console.WriteLine("Smartnode configured and ready to launch");
+                Console.WriteLine("Smartnode configured correctly with Nimbus and Nethermind, starting the smart node...");
+                error = SetupService.StartSmartNode();
+                if (string.IsNullOrEmpty(error)) {
+                    Console.WriteLine("SmartNode successfully started, congratulations on installing your first blockchain node!");
+                }
+                else
+                {
+                    Console.WriteLine("Error while trying to trying to start the smartnode: " + error);
+                }
             }
             else
             {
