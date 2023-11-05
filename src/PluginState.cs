@@ -16,6 +16,8 @@ namespace Keepix.SmartNodePlugin
         CONFIGURING_NODE,
         STARTING_NODE,
         NODE_RUNNING,
+        NODE_STOPPED,
+        NODE_RESTARTING,
         SETUP_ERROR_STATE,
     }
 

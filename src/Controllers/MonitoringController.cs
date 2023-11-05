@@ -18,9 +18,11 @@ namespace Keepix.SmartNodePlugin.Controllers
         public static async Task<bool> OnStatus(InstallInput input)
         {
             stateManager = PluginStateManager.GetStateManager();
+            var isRunning = SetupService.IsNodeRunning();
 
             Console.WriteLine(JsonConvert.SerializeObject(new {
-                NodeState = stateManager.State.ToString()
+                NodeState = stateManager.State.ToString(),
+                Alive = isRunning
             }));
             return true;
         }

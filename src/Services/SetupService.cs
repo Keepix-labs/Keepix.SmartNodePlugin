@@ -98,7 +98,7 @@ namespace Keepix.SmartNodePlugin.Services
 
             Console.WriteLine($"Download RPL CLI {build}...");
             // Create binary directory if it does not already exist
-            Shell.ExecuteCommand("mkdir ~/bin");
+            try { Shell.ExecuteCommand("mkdir ~/bin"); } catch (Exception) { }
             // Download RPL cli
             Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool");
 
@@ -125,6 +125,32 @@ namespace Keepix.SmartNodePlugin.Services
             // Shell.ExecuteCommand("rm -rf ~/.rocketpool");
             Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
             return true;
+        }
+
+        public static bool IsNodeRunning()
+        {
+            var result = Shell.ExecuteCommand("docker ps");
+            if (result.Contains("keepix_eth2")) {
+                return true;
+            }
+            return false;
+        }
+
+        public static string StartNode()
+        {
+            var result = Shell.ExecuteCommand("~/bin/rocketpool service start");
+            if (result.Contains("Your validator will miss up to 3 attestations when it starts")) {
+                return string.Empty;
+            }
+            return result;
+        }
+        public static string StopNode()
+        {
+            var result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");
+            if (result.Contains("stop your validator")) {
+                return string.Empty;
+            }
+            return result;
         }
     }
 }

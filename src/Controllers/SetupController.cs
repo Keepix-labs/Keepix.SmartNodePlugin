@@ -51,7 +51,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 Console.WriteLine("Error while trying to install the service for Rocketpool, make sure you have docker installed on your computer: " + error);
                 return false;
             }
-            Console.WriteLine("RPL Service installed sucessfully");
+            Console.WriteLine("RPL Service installed successfully");
             stateManager.DB.Store("STATE", PluginStateEnum.CONFIGURING_NODE);
             //Setting up smart node config before starting up the node
             error = SetupService.ConfigSmartNode();
@@ -80,6 +80,100 @@ namespace Keepix.SmartNodePlugin.Controllers
             return true;
         }
 
+        [KeepixPluginFn("start")]
+        public static async Task<bool> OnStart()
+        {
+            try
+            {
+                stateManager = PluginStateManager.GetStateManager();
+                  if (stateManager.State == PluginStateEnum.NODE_RUNNING &&
+                   SetupService.IsNodeRunning()) {
+                    Console.WriteLine("The smart-node is already running!");
+                    return false;
+                }
+
+                var error = SetupService.StartNode();
+                if (!string.IsNullOrEmpty(error)) {
+                    Console.WriteLine("An error occured while trying to start your node, check manually or contact the Keepix team " + error);
+                }
+                else
+                {
+                      stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
+                      Console.WriteLine("Smart-node successfully started");
+                }
+            }
+            catch (Exception) 
+            {
+                return false;   
+            }
+            return true;
+        }
+
+        [KeepixPluginFn("restart")]
+        public static async Task<bool> OnRestart()
+        {
+            try
+            {
+                stateManager = PluginStateManager.GetStateManager();
+                var isRunning = SetupService.IsNodeRunning();
+                string error = string.Empty;
+                stateManager.DB.Store("STATE", PluginStateEnum.NODE_RESTARTING);
+
+                if (isRunning) {
+                    error = SetupService.StopNode();
+                    if (!string.IsNullOrEmpty(error)) {
+                        Console.WriteLine("An error occured while trying to stop your node, check manually or contact the Keepix team " + error);
+                    }
+                    Thread.Sleep(TimeSpan.FromSeconds(30));
+                    // Wait 30 seconds to make sure it properly stopped the docker instance first
+                }
+
+                error = SetupService.StartNode();
+                if (!string.IsNullOrEmpty(error)) {
+                    Console.WriteLine("An error occured while trying to start your node, check manually or contact the Keepix team " + error);
+                }
+                else
+                {
+                      stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
+                      Console.WriteLine("Smart-node successfully started");
+                }
+            }
+            catch (Exception) 
+            {
+                return false;   
+            }
+            return true;
+        }
+
+
+        [KeepixPluginFn("stop")]
+        public static async Task<bool> OnStop()
+        {
+            try
+            {
+                stateManager = PluginStateManager.GetStateManager();
+                  if (stateManager.State != PluginStateEnum.NODE_RUNNING && !SetupService.IsNodeRunning()) {
+                    Console.WriteLine("The smart-node is not running!");
+                    return false;
+                }
+
+                var error = SetupService.StopNode();
+                if (!string.IsNullOrEmpty(error)) {
+                    Console.WriteLine("An error occured while trying to stop your node, check manually or contact the Keepix team " + error);
+                } 
+                else
+                {
+                    stateManager.DB.Store("STATE", PluginStateEnum.NODE_STOPPED);
+                    Console.WriteLine("Smart-node successfully stopped");
+                }
+            }
+            catch (Exception) 
+            {
+                return false;   
+            }
+            return true;
+        }
+
         [KeepixPluginFn("uninstall")]
         public static async Task<bool> OnUninstall()
         {
@@ -91,13 +185,13 @@ namespace Keepix.SmartNodePlugin.Controllers
                     return false;
                 }
 
-                SetupService.RemoveNode();
                 stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
+                SetupService.RemoveNode();
                 Console.WriteLine("Smart-node successfully uninstalled");
             }
             catch (Exception) 
             {
-                Console.WriteLine("Error while trying to uninstall the Smartnode, please do it manually or contact Keepix team.");
+                Console.WriteLine("Some errors occured while trying to uninstall the Smartnode, please check manually or contact Keepix team.");
                 return false;   
             }
             return true;
