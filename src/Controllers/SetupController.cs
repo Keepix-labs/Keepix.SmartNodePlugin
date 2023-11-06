@@ -180,12 +180,12 @@ namespace Keepix.SmartNodePlugin.Controllers
         {
 
                 stateManager = PluginStateManager.GetStateManager();
-                  if (stateManager.State == PluginStateEnum.NO_STATE) {
-                    Console.WriteLine("The smart-node is not installed!");
-                    return false;
-                }
+                //   if (stateManager.State == PluginStateEnum.NO_STATE) {
+                //     Console.WriteLine("The smart-node is not installed!");
+                //     return false;
+                // }
 
-                stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
+                // stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
                 string error = SetupService.RemoveNode(stateManager);
                 if (!string.IsNullOrEmpty(error)) {
                     Console.WriteLine("Some errors occured while trying to uninstall the Smartnode " + error);

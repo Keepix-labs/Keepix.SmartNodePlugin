@@ -28,11 +28,16 @@ namespace Keepix.SmartNodePlugin.Services
             {
                 // this will wait for this text prompted to move onto the next step
                 result = Shell.ExecuteCommand("~/bin/rocketpool service start --yes", new List<ShellCondition>() {
-                new ShellCondition() // LINUX
+                new ShellCondition()
                 {
                     content = "You currently have Doppelganger Protection enabled",
                     answers = new string[] {"y", ""}
-                }
+                },
+                new ShellCondition() // first run
+                {
+                    content = "**If you did NOT change clients, you can safely ignore this warning.**",
+                    answers = new string[] {"y", ""}
+                },
                  } );
                 if (result.Contains("You currently have Doppelganger Protection enabled") || result.Contains("Running"))
                     return string.Empty;
@@ -135,14 +140,15 @@ namespace Keepix.SmartNodePlugin.Services
         {
             string result = string.Empty;
             try {
-                result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");
+                result = StopNode();
                 string containers = "keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_grafana keepix_prometheus";
+                
                 InstallInput? input = stateManager.DB.Retrieve<InstallInput>("INSTALL");
+                Console.WriteLine("wtf2");
                 //adding mev boost containers also if chosen in settings of installation
-                if (input != null && input.EnableMEV) {
+                if (input != null && input.EnableMEV && input.Mainnet) {
                     containers += " keepix_mev-boost";
                 }
-
                 result = Shell.ExecuteCommand($"docker stop {containers}");
                 result = Shell.ExecuteCommand($"docker rm {containers}");
                 
@@ -155,6 +161,7 @@ namespace Keepix.SmartNodePlugin.Services
 
                 // Shell.ExecuteCommand("rm -rf ~/.rocketpool");
                 result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
+
             } catch (Exception) {
                 return result;
             }
@@ -173,7 +180,12 @@ namespace Keepix.SmartNodePlugin.Services
 
         public static string StopNode()
         {
-            var result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");
+            ShellCondition conditions = new ShellCondition()
+            {
+                content = "This is *intentional* and does not indicate a problem with your node",
+                answers = new string[] {"y", ""}
+            };
+            var result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes", new List<ShellCondition>() { conditions } );
             if (result.Contains("stop your validator")) {
                 return string.Empty;
             }
