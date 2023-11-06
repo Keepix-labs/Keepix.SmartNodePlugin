@@ -30,6 +30,7 @@ namespace Keepix.SmartNodePlugin.Utils
             string output = string.Empty;
            
             while (!process.StandardOutput.EndOfStream) {
+                // we just need to make sure we catch the before last line else we hang here
                 string? line = process.StandardOutput.ReadLine();
                 if (conditions != null && line != null) {
                     var conditionMet = conditions.FirstOrDefault(x => line.Contains(x.content));
