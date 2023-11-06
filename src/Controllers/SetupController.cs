@@ -54,7 +54,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine("RPL Service installed successfully");
             stateManager.DB.Store("STATE", PluginStateEnum.CONFIGURING_NODE);
             //Setting up smart node config before starting up the node
-            error = SetupService.ConfigSmartNode();
+            error = SetupService.ConfigSmartNode(input);
             if (string.IsNullOrEmpty(error)) {
                 Console.WriteLine("Smartnode configured correctly with Nimbus and Nethermind, starting the smart node...");
                 stateManager.DB.Store("STATE", PluginStateEnum.STARTING_NODE);

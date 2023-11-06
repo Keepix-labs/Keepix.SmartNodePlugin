@@ -1,5 +1,6 @@
 using Keepix.SmartNodePlugin.Utils;
 using System.Runtime.InteropServices;
+using Keepix.SmartNodePlugin.DTO.Input;
 
 namespace Keepix.SmartNodePlugin.Services
 {
@@ -25,13 +26,18 @@ namespace Keepix.SmartNodePlugin.Services
             try
             {
                 // this will wait for this text prompted to move onto the next step
-                ShellCondition conditions = new ShellCondition()
+                result = Shell.ExecuteCommand("~/bin/rocketpool service start --yes", new List<ShellCondition>() {
+                new ShellCondition() // LINUX
                 {
                     content = "Press y when you understand the above warning",
                     answers = new string[] {"y", ""}
-                };
-
-                result = Shell.ExecuteCommand("~/bin/rocketpool service start --yes", new List<ShellCondition>() { conditions } );
+                }, // MAC 
+                new ShellCondition()
+                {
+                    content = "Would you like to continue starting the service",
+                    answers = new string[] {"y", ""}
+                },
+                 } );
                 if (result.Contains("You currently have Doppelganger Protection enabled") || result.Contains("Running"))
                     return string.Empty;
                 return result;
@@ -65,7 +71,7 @@ namespace Keepix.SmartNodePlugin.Services
             }
         }
 
-        public static string ConfigSmartNode()
+        public static string ConfigSmartNode(InstallInput installInput)
         {
             string result = string.Empty;
             try
@@ -75,7 +81,22 @@ namespace Keepix.SmartNodePlugin.Services
                 // MEV ENABLED
                 // BEACON CHAIN SYNC POINT https://beaconstate-mainnet.chainsafe.io
 
-                result = Shell.ExecuteCommand("~/bin/rocketpool service config --smartnode-network mainnet --smartnode-projectName keepix --smartnode-priorityFee 2 --executionClient nethermind --consensusClient nimbus --consensusCommon-checkpointSyncUrl https://beaconstate-mainnet.chainsafe.io --mevBoost-mode local --mevBoost-selectionMode profile --mevBoost-enableUnregulatedAllMev");
+                var network = installInput.Mainnet ? "mainnet" : "holesky";
+
+                var cli = $"~/bin/rocketpool service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
+                " --executionClient nethermind --consensusClient nimbus";
+
+                if (network == "mainnet")
+                {
+                    // add syncpoint url if we are on main net
+                    cli += "  --consensusCommon-checkpointSyncUrl https://beaconstate-mainnet.chainsafe.io";
+                }
+
+                if (installInput.EnableMEV) {
+                    cli += " --mevBoost-mode local --mevBoost-selectionMode profile --mevBoost-enableUnregulatedAllMev";
+                }
+
+                result = Shell.ExecuteCommand("");
                 if (result.Trim().Length > 0) {
                     return result;
                 }
