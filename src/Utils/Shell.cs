@@ -41,12 +41,12 @@ namespace Keepix.SmartNodePlugin.Utils
                             Thread.Sleep(500);
                         }
 
-                        Thread.Sleep(1500); // once we met a condition we let time to terminal for processing the next conditions
+                         Thread.Sleep(1500); // once we met a condition we let time to terminal for processing the next conditions
                     }
                 }
                 output += line;
             }
-            process.WaitForExit();
+            process.WaitForExit(TimeSpan.FromMinutes(5));
 
             if (process.ExitCode != 0)
             {

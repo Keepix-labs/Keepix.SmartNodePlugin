@@ -1,6 +1,7 @@
 ﻿using Keepix.PluginSystem;
 using System.Reflection;
 using Keepix.SmartNodePlugin;
+using Keepix.SmartNodePlugin.Services;
 
 namespace PluginProgram
 {

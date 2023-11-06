@@ -35,7 +35,17 @@ namespace Keepix.SmartNodePlugin.Services
                 },
                 new ShellCondition() // first run
                 {
-                    content = "**If you did NOT change clients, you can safely ignore this warning.**",
+                    content = "you can safely ignore this warning",
+                    answers = new string[] {"y", ""}
+                },
+                 new ShellCondition() // first run
+                {
+                    content = "Press y when you understand the above warning",
+                    answers = new string[] {"y", ""}
+                },
+                 new ShellCondition() // first run
+                {
+                    content = "Couldn't determine previous Smartnode version from backup settings",
                     answers = new string[] {"y", ""}
                 },
                  } );
@@ -158,7 +168,7 @@ namespace Keepix.SmartNodePlugin.Services
                     };
                 result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
 
-                // Shell.ExecuteCommand("rm -rf ~/.rocketpool");
+                try { Shell.ExecuteCommand("rm -rf ~/.rocketpool"); } catch (Exception) { }
                 result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
 
             } catch (Exception) {

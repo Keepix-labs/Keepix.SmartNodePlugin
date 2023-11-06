@@ -1,0 +1,2 @@
+dotnet run '{\"key\": \"install\", \"WalletPrivateKey\": \"0x\", \"EnableMEV\": \"true\", \"Mainnet\": \"false\" }'
+dotnet run '{\"key\": \"wallet-import\", \"Mnemonic\": \"remind sail soon cram vanish garlic mushroom purity edge enact true mango wood damage bitter vague lounge choose loud all rough evolve harsh rival\" }'
