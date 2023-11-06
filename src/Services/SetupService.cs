@@ -134,10 +134,10 @@ namespace Keepix.SmartNodePlugin.Services
                 // Create binary directory if it does not already exist
                 try { Shell.ExecuteCommand("mkdir ~/bin"); } catch (Exception) { }
                 // Download RPL cli
-                result = Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool --allow-root");
+                result = Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool");
 
                 // Set the CLI as executable
-                result = Shell.ExecuteCommand("chmod +x ~/bin/rocketpool --allow-root");
+                result = Shell.ExecuteCommand("chmod +x ~/bin/rocketpool");
             }
             catch (Exception) {
                 return result;
