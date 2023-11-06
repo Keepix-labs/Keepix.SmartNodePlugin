@@ -102,6 +102,8 @@ namespace Keepix.SmartNodePlugin.Services
                     // add syncpoint url if we are on main net
                     cli += "  --consensusCommon-checkpointSyncUrl https://beaconstate-mainnet.chainsafe.io";
                 }
+                else // syncpoint for testnet
+                    cli += "  --consensusCommon-checkpointSyncUrl https://holesky.beaconstate.info/";
 
                 if (installInput.EnableMEV) {
                     cli += " --mevBoost-mode local --mevBoost-selectionMode profile --mevBoost-enableUnregulatedAllMev";
