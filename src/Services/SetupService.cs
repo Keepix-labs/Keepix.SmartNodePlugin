@@ -144,7 +144,6 @@ namespace Keepix.SmartNodePlugin.Services
                 string containers = "keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_grafana keepix_prometheus";
                 
                 InstallInput? input = stateManager.DB.Retrieve<InstallInput>("INSTALL");
-                Console.WriteLine("wtf2");
                 //adding mev boost containers also if chosen in settings of installation
                 if (input != null && input.EnableMEV && input.Mainnet) {
                     containers += " keepix_mev-boost";
