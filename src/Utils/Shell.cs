@@ -33,9 +33,9 @@ namespace Keepix.SmartNodePlugin.Utils
                 foreach (var condition in conditions)
                 {
                     var retry = 0;
-                    output += process.StandardOutput.ReadLine();
                     while (!output.Contains(condition.content) && retry < 100)
                     {
+                        output += process.StandardOutput.ReadLine();
                         foreach (var answer in condition.answers) {
 
                             if (answer.Length > 0) {
