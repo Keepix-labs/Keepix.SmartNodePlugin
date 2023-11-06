@@ -10,7 +10,7 @@ namespace Keepix.SmartNodePlugin.Services
 
         public static string ImportWallet(string mnemonic, bool skipValidatorKey)
         {
-            var cli = $"~/bin/rocketpool wallet recover --mnemonic '{mnemonic}' --password 'keepixgenerated'";
+            var cli = $"~/bin/rocketpool --allow-root wallet recover --mnemonic '{mnemonic}' --password 'keepixgenerated'";
             if (skipValidatorKey) {
                 cli += " --skip-validator-key-recovery";
             }
@@ -29,7 +29,7 @@ namespace Keepix.SmartNodePlugin.Services
 
         public static string ExportWallet()
         {
-            var result = Shell.ExecuteCommand("~/bin/rocketpool wallet export", new List<ShellCondition>()
+            var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root wallet export", new List<ShellCondition>()
              {
                 new ShellCondition()
                 {

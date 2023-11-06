@@ -11,7 +11,7 @@ namespace Keepix.SmartNodePlugin.Services
         {
             try
             {
-                var res = Shell.ExecuteCommand("~/bin/rocketpool");
+                var res = Shell.ExecuteCommand("~/bin/rocketpool --allow-root");
                 // exit code != 0 will throw an exception so we will know that the cli is not installed properly
                 return res.Length > 0;
             }
@@ -27,7 +27,7 @@ namespace Keepix.SmartNodePlugin.Services
             try
             {
                 // this will wait for this text prompted to move onto the next step
-                result = Shell.ExecuteCommand("~/bin/rocketpool service start --yes", new List<ShellCondition>() {
+                result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root service start --yes", new List<ShellCondition>() {
                 new ShellCondition()
                 {
                     content = "You currently have Doppelganger Protection enabled",
@@ -65,7 +65,7 @@ namespace Keepix.SmartNodePlugin.Services
             string result = string.Empty;
             try
             {
-                result = Shell.ExecuteCommand("~/bin/rocketpool service install -y -d");
+                result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root service install -y -d");
                 if (result.Length > 0) {
                     // exit code != 0 will throw an exception so we will know if the directory was not installed properly
                     var dir = Shell.ExecuteCommand("cd ~/.rocketpool");
@@ -94,7 +94,7 @@ namespace Keepix.SmartNodePlugin.Services
 
                 var network = installInput.Mainnet ? "mainnet" : "holesky";
 
-                var cli = $"~/bin/rocketpool service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
+                var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
                 " --executionClient nethermind --consensusClient nimbus";
 
                 if (network == "mainnet")
@@ -134,10 +134,10 @@ namespace Keepix.SmartNodePlugin.Services
                 // Create binary directory if it does not already exist
                 try { Shell.ExecuteCommand("mkdir ~/bin"); } catch (Exception) { }
                 // Download RPL cli
-                result = Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool");
+                result = Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool --allow-root");
 
                 // Set the CLI as executable
-                result = Shell.ExecuteCommand("chmod +x ~/bin/rocketpool");
+                result = Shell.ExecuteCommand("chmod +x ~/bin/rocketpool --allow-root");
             }
             catch (Exception) {
                 return result;
@@ -169,7 +169,7 @@ namespace Keepix.SmartNodePlugin.Services
                 result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
 
                 try { Shell.ExecuteCommand("rm -rf ~/.rocketpool"); } catch (Exception) { }
-                result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
+                result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool --allow-root");
 
             } catch (Exception) {
                 return result;
@@ -194,7 +194,7 @@ namespace Keepix.SmartNodePlugin.Services
                 content = "This is *intentional* and does not indicate a problem with your node",
                 answers = new string[] {"y", ""}
             };
-            var result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes", new List<ShellCondition>() { conditions } );
+            var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root service stop --yes", new List<ShellCondition>() { conditions } );
             if (result.Contains("stop your validator")) {
                 return string.Empty;
             }
