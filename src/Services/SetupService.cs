@@ -1,6 +1,7 @@
 using Keepix.SmartNodePlugin.Utils;
 using System.Runtime.InteropServices;
 using Keepix.SmartNodePlugin.DTO.Input;
+using System.Xml.XPath;
 
 namespace Keepix.SmartNodePlugin.Services
 {
@@ -29,14 +30,9 @@ namespace Keepix.SmartNodePlugin.Services
                 result = Shell.ExecuteCommand("~/bin/rocketpool service start --yes", new List<ShellCondition>() {
                 new ShellCondition() // LINUX
                 {
-                    content = "Press y when you understand the above warning",
+                    content = "You currently have Doppelganger Protection enabled",
                     answers = new string[] {"y", ""}
-                }, // MAC 
-                new ShellCondition()
-                {
-                    content = "Would you like to continue starting the service",
-                    answers = new string[] {"y", ""}
-                },
+                }
                  } );
                 if (result.Contains("You currently have Doppelganger Protection enabled") || result.Contains("Running"))
                     return string.Empty;
@@ -71,7 +67,7 @@ namespace Keepix.SmartNodePlugin.Services
             }
         }
 
-        public static string ConfigSmartNode(InstallInput installInput)
+        public static string ConfigSmartNode(InstallInput installInput, PluginStateManager stateManager)
         {
             string result = string.Empty;
             try
@@ -96,7 +92,7 @@ namespace Keepix.SmartNodePlugin.Services
                     cli += " --mevBoost-mode local --mevBoost-selectionMode profile --mevBoost-enableUnregulatedAllMev";
                 }
 
-                result = Shell.ExecuteCommand("");
+                result = Shell.ExecuteCommand(cli);
                 if (result.Trim().Length > 0) {
                     return result;
                 }
@@ -108,44 +104,61 @@ namespace Keepix.SmartNodePlugin.Services
             }
         }
 
-        public static bool DownloadCli()
+        public static string DownloadCli()
         {
-            OSPlatform oSPlatform = OS.GetOS();
-            bool isArm64 = RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
-            // windows detected means with WSL2 compability only
-            string osValue = (oSPlatform == OSPlatform.Linux || oSPlatform == OSPlatform.Windows) ? "linux" : "darwin";
-            string arch = isArm64 ? "arm64" : "amd64";
-            string build = $"rocketpool-cli-{osValue}-{arch}";
+            string result = string.Empty;
+            try {
+                OSPlatform oSPlatform = OS.GetOS();
+                bool isArm64 = RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+                // windows detected means with WSL2 compability only
+                string osValue = (oSPlatform == OSPlatform.Linux || oSPlatform == OSPlatform.Windows) ? "linux" : "darwin";
+                string arch = isArm64 ? "arm64" : "amd64";
+                string build = $"rocketpool-cli-{osValue}-{arch}";
 
-            Console.WriteLine($"Download RPL CLI {build}...");
-            // Create binary directory if it does not already exist
-            try { Shell.ExecuteCommand("mkdir ~/bin"); } catch (Exception) { }
-            // Download RPL cli
-            Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool");
+                Console.WriteLine($"Download RPL CLI {build}...");
+                // Create binary directory if it does not already exist
+                try { Shell.ExecuteCommand("mkdir ~/bin"); } catch (Exception) { }
+                // Download RPL cli
+                result = Shell.ExecuteCommand($"curl -L https://github.com/rocket-pool/smartnode-install/releases/latest/download/{build} -o ~/bin/rocketpool");
 
-            // Set the CLI as executable
-            Shell.ExecuteCommand("chmod +x ~/bin/rocketpool");
+                // Set the CLI as executable
+                result = Shell.ExecuteCommand("chmod +x ~/bin/rocketpool");
+            }
+            catch (Exception) {
+                return result;
+            }
 
-            return true;
+            return string.Empty;
         }
 
-        public static bool RemoveNode()
+        public static string RemoveNode(PluginStateManager stateManager)
         {
+            string result = string.Empty;
+            try {
+                result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");
+                string containers = "keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_grafana keepix_prometheus";
+                InstallInput? input = stateManager.DB.Retrieve<InstallInput>("INSTALL");
+                //adding mev boost containers also if chosen in settings of installation
+                if (input != null && input.EnableMEV) {
+                    containers += " keepix_mev-boost";
+                }
 
-            Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");
-            Shell.ExecuteCommand("docker stop keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_mev-boost keepix_grafana keepix_prometheus");
-            Shell.ExecuteCommand("docker rm keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_mev-boost keepix_grafana keepix_prometheus");
-            
-              ShellCondition conditions = new ShellCondition()
-                {
-                    content = "Are you sure you want to continue",
-                    answers = new string[] {"y", ""}
-                };
-            Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
+                result = Shell.ExecuteCommand($"docker stop {containers}");
+                result = Shell.ExecuteCommand($"docker rm {containers}");
+                
+                ShellCondition conditions = new ShellCondition()
+                    {
+                        content = "This will remove anonymous local volumes",
+                        answers = new string[] {"y", ""}
+                    };
+                result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
 
-            // Shell.ExecuteCommand("rm -rf ~/.rocketpool");
-            Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
-            return true;
+                // Shell.ExecuteCommand("rm -rf ~/.rocketpool");
+                result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
+            } catch (Exception) {
+                return result;
+            }
+            return string.Empty;
         }
 
         public static bool IsNodeRunning()
@@ -157,14 +170,7 @@ namespace Keepix.SmartNodePlugin.Services
             return false;
         }
 
-        public static string StartNode()
-        {
-            var result = Shell.ExecuteCommand("~/bin/rocketpool service start");
-            if (result.Contains("Your validator will miss up to 3 attestations when it starts")) {
-                return string.Empty;
-            }
-            return result;
-        }
+
         public static string StopNode()
         {
             var result = Shell.ExecuteCommand("~/bin/rocketpool service stop --yes");

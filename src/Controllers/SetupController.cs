@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Keepix.PluginSystem;
@@ -17,6 +18,7 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("install")]
         public static async Task<bool> OnInstall(InstallInput input)
         {
+            //TODO: Check if docker is up and ready
             stateManager = PluginStateManager.GetStateManager();
             if (stateManager.State != PluginStateEnum.NO_STATE) {
                 Console.WriteLine("The smart-node is already in a running state or the installation failed, please uninstall first before a new installation. USE WITH CAUTION.");
@@ -26,26 +28,24 @@ namespace Keepix.SmartNodePlugin.Controllers
             stateManager.DB.Store("STATE", PluginStateEnum.STARTING_INSTALLATION);
 
             //  SETUP CLI START //
-            bool cliReady;
+            string error = string.Empty;
             if (!SetupService.isCliInstalled())
             {
                 Console.WriteLine("Need to install RPL CLI to this machine...");
                 stateManager.DB.Store("STATE", PluginStateEnum.INSTALLING_CLI);
-                cliReady = SetupService.DownloadCli();
-                if (cliReady) {
-                    Console.WriteLine("CLI successfully installed");
-                }
-            } else cliReady = true;
+                error = SetupService.DownloadCli();
+            }
 
-            if (!cliReady) {
-                Console.WriteLine("Issue while installing the RocketPool CLI on your machine, please contact the Keepix Team or try again later.");
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine("Issue while installing the RocketPool CLI on your machine: " + error);
                 return false;
             }
+            else Console.WriteLine("CLI successfully installed");
             // SETUP CLI END //
 
             // SETUP SMART NODE START //
             stateManager.DB.Store("STATE", PluginStateEnum.INSTALLING_NODE);
-            string error = SetupService.InstallSmartNode();
+            error = SetupService.InstallSmartNode();
             if (!string.IsNullOrEmpty(error))
             {
                 Console.WriteLine("Error while trying to install the service for Rocketpool, make sure you have docker installed on your computer: " + error);
@@ -54,7 +54,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine("RPL Service installed successfully");
             stateManager.DB.Store("STATE", PluginStateEnum.CONFIGURING_NODE);
             //Setting up smart node config before starting up the node
-            error = SetupService.ConfigSmartNode(input);
+            error = SetupService.ConfigSmartNode(input, stateManager);
             if (string.IsNullOrEmpty(error)) {
                 Console.WriteLine("Smartnode configured correctly with Nimbus and Nethermind, starting the smart node...");
                 stateManager.DB.Store("STATE", PluginStateEnum.STARTING_NODE);
@@ -62,6 +62,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 if (string.IsNullOrEmpty(error)) {
                     stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
                     Console.WriteLine("SmartNode successfully started, congratulations on installing your first Ethereum blockchain node!");
+                    stateManager.DB.Store("INSTALL", input); //save install input data
                 }
                 else
                 {
@@ -92,7 +93,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                     return false;
                 }
 
-                var error = SetupService.StartNode();
+                var error = SetupService.StartSmartNode();
                 if (!string.IsNullOrEmpty(error)) {
                     Console.WriteLine("An error occured while trying to start your node, check manually or contact the Keepix team " + error);
                 }
@@ -128,7 +129,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                     // Wait 30 seconds to make sure it properly stopped the docker instance first
                 }
 
-                error = SetupService.StartNode();
+                error = SetupService.StartSmartNode();
                 if (!string.IsNullOrEmpty(error)) {
                     Console.WriteLine("An error occured while trying to start your node, check manually or contact the Keepix team " + error);
                 }
@@ -177,8 +178,7 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("uninstall")]
         public static async Task<bool> OnUninstall()
         {
-            try
-            {
+
                 stateManager = PluginStateManager.GetStateManager();
                   if (stateManager.State == PluginStateEnum.NO_STATE) {
                     Console.WriteLine("The smart-node is not installed!");
@@ -186,14 +186,13 @@ namespace Keepix.SmartNodePlugin.Controllers
                 }
 
                 stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
-                SetupService.RemoveNode();
+                string error = SetupService.RemoveNode(stateManager);
+                if (!string.IsNullOrEmpty(error)) {
+                    Console.WriteLine("Some errors occured while trying to uninstall the Smartnode " + error);
+                    return false;
+                }
                 Console.WriteLine("Smart-node successfully uninstalled");
-            }
-            catch (Exception) 
-            {
-                Console.WriteLine("Some errors occured while trying to uninstall the Smartnode, please check manually or contact Keepix team.");
-                return false;   
-            }
+            
             return true;
         }
     }

@@ -28,36 +28,23 @@ namespace Keepix.SmartNodePlugin.Utils
 
             process.Start();
             string output = string.Empty;
-            if (conditions != null && conditions.Count > 0)
-            {
-                foreach (var condition in conditions)
-                {
-                    var retry = 0;
-                    while (!output.Contains(condition.content) && retry < 100)
-                    {
-                        output += process.StandardOutput.ReadLine();
-                        foreach (var answer in condition.answers) {
-
-                            if (answer.Length > 0) {
-                                process.StandardInput.WriteLine(answer);
-                            }
-                            else
-                            {
-                                process.StandardInput.WriteLine(); // in case we just need to send an empty entry to be processed
-                            }
- 
+           
+            while (!process.StandardOutput.EndOfStream) {
+                string? line = process.StandardOutput.ReadLine();
+                if (conditions != null && line != null) {
+                    var conditionMet = conditions.FirstOrDefault(x => line.Contains(x.content));
+                    if (conditionMet != null) {
+                        foreach(var answer in conditionMet.answers) {
+                            if (answer.Length > 0) process.StandardInput.WriteLine(answer);
+                            else process.StandardInput.WriteLine(); // in case we just need to send an empty entry to be processed
                             Thread.Sleep(500);
                         }
 
-                        Thread.Sleep(1000);
-                        retry++;
+                        Thread.Sleep(1500); // once we met a condition we let time to terminal for processing the next conditions
                     }
                 }
-                // After sending tasks, we add a delay to ensure the input is processed
-                Thread.Sleep(1000);
+                output += line;
             }
-
-            output += process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
             if (process.ExitCode != 0)
