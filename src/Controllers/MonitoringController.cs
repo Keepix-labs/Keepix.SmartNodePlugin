@@ -15,28 +15,25 @@ namespace Keepix.SmartNodePlugin.Controllers
     {
         private static PluginStateManager stateManager;
         [KeepixPluginFn("status")]
-        public static async Task<bool> OnStatus(InstallInput input)
+        public static async Task<string> OnStatus(InstallInput input)
         {
             stateManager = PluginStateManager.GetStateManager();
-            var isRunning = SetupService.IsNodeRunning();
-
-            Console.WriteLine(JsonConvert.SerializeObject(new {
+            return JsonConvert.SerializeObject(new {
                 NodeState = stateManager.State.ToString(),
-                Alive = isRunning
-            }));
-            return true;
+                Alive = SetupService.IsNodeRunning()
+            });
         }
 
         [KeepixPluginFn("sync-state")]
-        public static async Task<bool> OnSyncState(InstallInput input)
+        public static async Task<string> OnSyncState(InstallInput input)
         {
             stateManager = PluginStateManager.GetStateManager();
-
-            Console.WriteLine(JsonConvert.SerializeObject(new {
-                SyncState = "UNSYNCED",
-                Progress = "X%"
-            }));
-            return true;
+            var (executionSyncProgress, consensusSyncProgress) = StateService.PercentSync();
+            return JsonConvert.SerializeObject(new {
+                IsSynced = StateService.IsNodeSynced(),
+                executionSyncProgress,
+                consensusSyncProgress
+            });
         }
     }
 }
