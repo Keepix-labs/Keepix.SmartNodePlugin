@@ -41,7 +41,7 @@ namespace Keepix.SmartNodePlugin
             try {
                 stateManager.State = stateManager.DB.Retrieve<PluginStateEnum>("STATE");
             } 
-            catch (Exception) {
+            catch (KeyNotFoundException) {
                 stateManager.State = PluginStateEnum.NO_STATE;
             }
             return stateManager;

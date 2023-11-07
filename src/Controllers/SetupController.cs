@@ -18,7 +18,11 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("install")]
         public static async Task<bool> OnInstall(InstallInput input)
         {
-            //TODO: Check if docker is up and ready
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
             stateManager = PluginStateManager.GetStateManager();
             if (stateManager.State != PluginStateEnum.NO_STATE) {
                 Console.WriteLine("The smart-node is already in a running state or the installation failed, please uninstall first before a new installation. USE WITH CAUTION.");
@@ -58,7 +62,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             if (string.IsNullOrEmpty(error)) {
                 Console.WriteLine("Smartnode configured correctly with Nimbus and Nethermind, starting the smart node...");
                 stateManager.DB.Store("STATE", PluginStateEnum.STARTING_NODE);
-                error = SetupService.StartSmartNode();
+                error = SetupService.StartSmartNode(stateManager);
                 if (string.IsNullOrEmpty(error)) {
                     stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
                     Console.WriteLine("SmartNode successfully started, congratulations on installing your first Ethereum blockchain node!");
@@ -84,6 +88,11 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("start")]
         public static async Task<bool> OnStart()
         {
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
             try
             {
                 stateManager = PluginStateManager.GetStateManager();
@@ -93,7 +102,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                     return false;
                 }
 
-                var error = SetupService.StartSmartNode();
+                var error = SetupService.StartSmartNode(stateManager);
                 if (!string.IsNullOrEmpty(error)) {
                     Console.WriteLine("An error occured while trying to start your node, check manually or contact the Keepix team " + error);
                 }
@@ -113,6 +122,11 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("restart")]
         public static async Task<bool> OnRestart()
         {
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
             try
             {
                 stateManager = PluginStateManager.GetStateManager();
@@ -129,7 +143,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                     // Wait 30 seconds to make sure it properly stopped the docker instance first
                 }
 
-                error = SetupService.StartSmartNode();
+                error = SetupService.StartSmartNode(stateManager);
                 if (!string.IsNullOrEmpty(error)) {
                     Console.WriteLine("An error occured while trying to start your node, check manually or contact the Keepix team " + error);
                 }
@@ -150,6 +164,11 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("stop")]
         public static async Task<bool> OnStop()
         {
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
             try
             {
                 stateManager = PluginStateManager.GetStateManager();
@@ -178,7 +197,11 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("uninstall")]
         public static async Task<bool> OnUninstall()
         {
-
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
                 stateManager = PluginStateManager.GetStateManager();
                   if (stateManager.State == PluginStateEnum.NO_STATE) {
                     Console.WriteLine("The smart-node is not installed!");

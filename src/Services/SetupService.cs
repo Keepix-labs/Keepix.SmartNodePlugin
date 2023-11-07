@@ -7,6 +7,19 @@ namespace Keepix.SmartNodePlugin.Services
 {
     internal class SetupService
     {
+        public static bool isDockerRunning()
+        {
+            try
+            {
+                var res = Shell.ExecuteCommand("docker info");
+                return res.Contains("Kernel Version");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static bool isCliInstalled()
         {
             try
@@ -21,11 +34,25 @@ namespace Keepix.SmartNodePlugin.Services
             }
         }
 
-        public static string StartSmartNode()
+        public static string StartSmartNode(PluginStateManager stateManager)
         {
             string result = string.Empty;
             try
             {
+                OSPlatform oSPlatform = OS.GetOS();
+                if (oSPlatform == OSPlatform.OSX) {
+                        try {
+                        // fix exporter issues on OSX at startup
+                        string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        var path = $"{homeDirectory}/.rocketpool/override/exporter.yml";
+                        string fileContent = File.ReadAllText(path);
+                        if (!fileContent.Contains("/proc:/host/proc:ro")) {
+                            File.AppendAllText(path, "\n    volumes: [\"/proc:/host/proc:ro\",\"/sys:/host/sys:ro\"]\n");
+                        }
+                        } catch (Exception error) { Console.WriteLine(error); }
+                        stateManager.DB.Store("OSX_VOLUME_FIXED", true);
+                }
+
                 // this will wait for this text prompted to move onto the next step
                 result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root service start --yes", new List<ShellCondition>() {
                 new ShellCondition()
@@ -160,8 +187,9 @@ namespace Keepix.SmartNodePlugin.Services
                 if (input != null && input.EnableMEV && input.Mainnet) {
                     containers += " keepix_mev-boost";
                 }
-                result = Shell.ExecuteCommand($"docker stop {containers}");
-                result = Shell.ExecuteCommand($"docker rm {containers}");
+                
+                try { Shell.ExecuteCommand($"docker stop {containers}"); } catch (Exception) {}
+                try { Shell.ExecuteCommand($"docker rm {containers}"); } catch (Exception) {}
                 
                 ShellCondition conditions = new ShellCondition()
                     {
@@ -171,6 +199,7 @@ namespace Keepix.SmartNodePlugin.Services
                 result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
 
                 try { Shell.ExecuteCommand("rm -rf ~/.rocketpool"); } catch (Exception) { }
+                try { Shell.ExecuteCommand("rm -rf ./data/db.store"); } catch (Exception) { }
                 result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool --allow-root");
 
             } catch (Exception) {
