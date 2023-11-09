@@ -210,10 +210,12 @@ namespace Keepix.SmartNodePlugin.Services
 
         public static bool IsNodeRunning()
         {
-            var result = Shell.ExecuteCommand("docker ps");
-            if (result.Contains("keepix_eth2")) {
-                return true;
-            }
+            try {
+                var result = Shell.ExecuteCommand("docker ps");
+                if (result.Contains("keepix_eth2")) {
+                    return true;
+                }
+            } catch (Exception) { }
             return false;
         }
 

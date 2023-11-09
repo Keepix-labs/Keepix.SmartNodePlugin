@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-import { APIState } from "../context/api/APIProvider";
 
 export const getErrorMsg = (e: unknown) => {
   if (typeof e === "string") {
@@ -14,8 +13,7 @@ export const getErrorMsg = (e: unknown) => {
 };
 
 export const safeFetch = async (
-  url: string,
-  setAPIState: Dispatch<SetStateAction<APIState | null>>
+  url: string
 ) => {
   let res = new Response();
   try {
@@ -26,7 +24,6 @@ export const safeFetch = async (
     });
   } catch (error) {
     console.error(error);
-    setAPIState("WAITING");
     await new Promise((r) => setTimeout(r, 3000));
 
     try {
@@ -36,12 +33,9 @@ export const safeFetch = async (
         },
       });
     } catch (error) {
-      setAPIState("UNREACHABLE");
       throw new Error("API not reachable");
     }
   }
-
-  setAPIState("UP");
 
   return res;
 };

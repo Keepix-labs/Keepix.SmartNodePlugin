@@ -34,6 +34,12 @@ html {
 [data-status=danger] {
   --color: var(--danger-rgb);
 }
+[data-status=gray] {
+  --color: var(--gray-rgb);
+}
+[data-status=gray-black] {
+  --color: var(--gray-black-rgb);
+}
 
 /* Title */
 

@@ -35,6 +35,10 @@
 	--success: rgb(var(--success-rgb));
 	--info-rgb: 125 44 212; 
 	--info: rgb(var(--info-rgb));
+	--gray-rgb: 91 87 87; 
+	--gray: rgb(var(--gray-rgb));
+	--gray-black-rgb: 52 52 52; 
+	--gray-black: rgb(var(--gray-black-rgb));
 
 	/* Marge */
 	--marge-primary: calc(20px + 7 * (100vw - 320px) / 1080);

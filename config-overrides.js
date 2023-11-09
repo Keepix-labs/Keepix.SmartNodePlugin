@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const fs = require('fs');
 const { exec } = require('child_process');
+const cors = require('cors');
 
 const pluginId = fs.readdirSync('.').filter(x => x.endsWith('.csproj')).map(x => x.replace('.csproj', ''))[0];
 
@@ -27,10 +28,17 @@ const executeServer = () => {
     console.log('Start Dev Server.');
 
     const app = express();
+
+    app.use(cors());
     app.set('port', 2000);
     app.set('host', '0.0.0.0');
 
     app.get(`/plugins/${pluginId}/:key`, async (req, res) => {
+
+        console.log({
+            key: req.params.key,
+            ... req.body
+        });
 
         const result = await execPluginFunction({
             key: req.params.key,
