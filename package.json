@@ -1,6 +1,6 @@
 {
     "name": "keepix-application-interface",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "dependencies": {
         "@iconify-icon/react": "^1.0.8",
         "@testing-library/jest-dom": "^5.17.0",
@@ -23,7 +23,7 @@
     "scripts": {
         "start": "npm run p-build-debug && react-app-rewired start",
         "increase-build-version": "increase-build-package-public-directory && increase-build-package-public-directory public",
-        "build": "npm run p-build-all && npm run increase-build-version && react-app-rewired build && cp -R ./dist ./build",
+        "build": "npm run p-build-all && npm run increase-build-version && PUBLIC_URL=/plugins/Keepix.SmartNodePlugin/view react-app-rewired build && cp -R ./dist ./build",
         "publish": "cd build && npm publish",
         "test": "react-app-rewired test",
         "eject": "react-app-rewired eject",

@@ -31,7 +31,7 @@ export default function HomeView() {
           title="Status"
         >{status?.NodeState}</Field>
         {
-          (status?.NodeState != 'NODE_STOPPED') ?
+          (status?.NodeState !== 'NODE_STOPPED' && status?.NodeState !== 'NO_STATE') ?
           <Btn
             status="danger"
             onClick={async () => { await safeFetch(`${fetchCmdUrl}/stop`) }}

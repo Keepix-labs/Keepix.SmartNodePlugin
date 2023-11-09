@@ -40,5 +40,8 @@ also an api mock of keepix-server are available on http://localhost:2000/plugins
 
 public/package.json are used for publish the build of the plugin.  
   
+The plugin is loaded by the keepix-server.
+Warn attention to set the path of the plugin correctly on the package.json at the build step like this PUBLIC_URL=/plugins/Keepix.SmartNodePlugin/view
+
 `npm run build`  
 `npm run publish`  
