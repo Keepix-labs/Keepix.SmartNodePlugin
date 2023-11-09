@@ -399,3 +399,9 @@ FodyWeavers.xsd
 *.sln.iml
 .vscode/
 data/
+
+# ignore directories
+data/
+bin/
+build/
+.DS_Store
