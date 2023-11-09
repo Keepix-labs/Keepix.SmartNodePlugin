@@ -33,6 +33,9 @@ Install nodejs v18
 
 `npm run start`  
 
+go on http://localhost:3000
+also an api mock of keepix-server are available on http://localhost:2000/plugins/Keepix.SmartNodePlugin/status like routes where you can see on keepix-server.  
+
 ## Publish Release
 
 public/package.json are used for publish the build of the plugin.  
