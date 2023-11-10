@@ -76,5 +76,13 @@ namespace Keepix.SmartNodePlugin.Services
             }
             return false;
         }
+
+        public static string getLogs(bool eth1)
+        {
+            var cli = eth1 ?  "~/bin/rocketpool --allow-root service logs eth1" : " ~/bin/rocketpool --allow-root service logs eth2";
+            var result = Shell.ExecuteCommand(cli, null, 5);
+
+            return result;
+        }
     }
 }

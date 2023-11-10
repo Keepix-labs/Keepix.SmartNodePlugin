@@ -53,7 +53,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             if (!string.IsNullOrEmpty(error))
             {
                 Console.WriteLine("Error while trying to install the service for Rocketpool, make sure you have docker installed on your computer: " + error);
-                return false;
+                 return false;
             }
             Console.WriteLine("RPL Service installed successfully");
             stateManager.DB.Store("STATE", PluginStateEnum.CONFIGURING_NODE);

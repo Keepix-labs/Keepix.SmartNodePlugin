@@ -44,5 +44,6 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine("Wallet infos: " + result);
             return true;
         }
+        
     }
 }

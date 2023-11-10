@@ -25,7 +25,7 @@ namespace Keepix.SmartNodePlugin.Controllers
         }
 
         [KeepixPluginFn("sync-state")]
-        public static async Task<string> OnSyncState(InstallInput input)
+        public static async Task<string> OnSyncState()
         {
             stateManager = PluginStateManager.GetStateManager();
             var (executionSyncProgress, consensusSyncProgress) = StateService.PercentSync();
@@ -33,6 +33,25 @@ namespace Keepix.SmartNodePlugin.Controllers
                 IsSynced = StateService.IsNodeSynced(),
                 executionSyncProgress,
                 consensusSyncProgress
+            });
+        }
+
+        [KeepixPluginFn("logs-eth1")]
+        public static async Task<string> OnLogsEth1()
+        {
+            var logs = StateService.getLogs(true);
+            return JsonConvert.SerializeObject(new {
+                logs
+            });
+        }
+
+        
+        [KeepixPluginFn("logs-eth2")]
+        public static async Task<string> OnLogsEth2()
+        {
+            var logs = StateService.getLogs(false);
+            return JsonConvert.SerializeObject(new {
+                logs
             });
         }
     }

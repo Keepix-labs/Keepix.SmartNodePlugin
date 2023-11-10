@@ -11,7 +11,7 @@ namespace Keepix.SmartNodePlugin.Utils
 
     public static class Shell
     {
-        public static string ExecuteCommand(string command, List<ShellCondition>? conditions = null)
+        public static string ExecuteCommand(string command, List<ShellCondition>? conditions = null, int waitForExit = -1)
         {
             var processInfo = new ProcessStartInfo("bash", $"-c \"{command}\"")
             {
@@ -29,6 +29,8 @@ namespace Keepix.SmartNodePlugin.Utils
             process.Start();
             string output = string.Empty;
            
+            var time = DateTime.UtcNow;
+
             while (!process.StandardOutput.EndOfStream) {
                 // we just need to make sure we catch the before last line else we hang here
                 string? line = process.StandardOutput.ReadLine();
@@ -45,9 +47,18 @@ namespace Keepix.SmartNodePlugin.Utils
                     }
                 }
                 output += line;
-            }
-            process.WaitForExit(TimeSpan.FromMinutes(5));
 
+                if (waitForExit != -1) {
+                    var now = DateTime.UtcNow;
+                    var secsSpent = (now - time).TotalSeconds;
+
+                    if (secsSpent >= waitForExit) {
+                        process.Kill();
+                    }
+                }
+            }
+
+            process.WaitForExit(TimeSpan.FromMinutes(5));
             if (process.ExitCode != 0)
             {
                 throw new Exception(output);
