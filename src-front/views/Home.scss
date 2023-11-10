@@ -1,0 +1,18 @@
+
+.home-row-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 5px;
+}
+
+.home-row-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 5px;
+}
+
+.home-row-full {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    column-gap: 5px;
+}
