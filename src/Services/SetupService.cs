@@ -197,6 +197,12 @@ namespace Keepix.SmartNodePlugin.Services
                         answers = new string[] {"y", ""}
                     };
                 result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
+                if (!string.IsNullOrEmpty(result) && result.Contains("Deleted Volumes")) {
+                    return string.Empty;
+                }
+
+                try { Shell.ExecuteCommand("docker volume rm keepix_eth1clientdata keepix_eth2clientdata keepix_grafana-storage keepix_prometheus-data"); } catch (Exception) {}
+                try { Shell.ExecuteCommand("docker network rm keepix_monitor-net keepix_net"); } catch (Exception) {}
 
                 try { Shell.ExecuteCommand("rm -rf ~/.rocketpool"); } catch (Exception) { }
                 try { Shell.ExecuteCommand("rm -rf ./data/db.store"); } catch (Exception) { }
