@@ -61,18 +61,25 @@ namespace Keepix.SmartNodePlugin.Controllers
             error = SetupService.ConfigSmartNode(input, stateManager);
             if (string.IsNullOrEmpty(error)) {
                 Console.WriteLine("Smartnode configured correctly with Nimbus and Nethermind, starting the smart node...");
-                stateManager.DB.Store("STATE", PluginStateEnum.STARTING_NODE);
-                error = SetupService.StartSmartNode(stateManager);
-                if (string.IsNullOrEmpty(error)) {
-                    stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
-                    Console.WriteLine("SmartNode successfully started, congratulations on installing your first Ethereum blockchain node!");
-                    stateManager.DB.Store("INSTALL", input); //save install input data
+
+                if (input.AutoStart == null || input.AutoStart == true) { // in case we do not want to auto-start the node after install.
+                    stateManager.DB.Store("STATE", PluginStateEnum.STARTING_NODE);
+                    error = SetupService.StartSmartNode(stateManager);
+                    if (string.IsNullOrEmpty(error)) {
+                        stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
+                        Console.WriteLine("SmartNode successfully started, congratulations on installing your first Ethereum blockchain node!");
+                        stateManager.DB.Store("INSTALL", input); //save install input data
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error while trying to trying to start the smartnode: " + error);
+                        return false;
+                    }
+                } else { 
+                     stateManager.DB.Store("STATE", PluginStateEnum.NODE_STOPPED);
                 }
-                else
-                {
-                    Console.WriteLine("Error while trying to trying to start the smartnode: " + error);
-                    return false;
-                }
+
+
             }
             else
             {
