@@ -205,7 +205,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 stateManager = PluginStateManager.GetStateManager();
                   if (stateManager.State == PluginStateEnum.NO_STATE) {
                     Console.WriteLine("The smart-node is not installed!");
-                    return false;
+                    return true;
                 }
 
                 stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
