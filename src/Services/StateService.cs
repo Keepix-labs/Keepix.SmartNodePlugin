@@ -44,6 +44,18 @@ namespace Keepix.SmartNodePlugin.Services
             return result;
         }
 
+        public static string FetchNodeWallet()
+        {
+            var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root wallet status");
+            if (!result.Contains("The node wallet is initialized")) {
+                return string.Empty;
+            }
+            string pattern = @"0x[a-fA-F0-9]{40}";
+            Match match = Regex.Match(result, pattern);
+
+            return match.Success ? match.Value : string.Empty;
+        }
+
     public static (string executionSyncProgress, string consensusSyncProgress) ExtractPercent(string data)
         {
             string executionSyncProgressPattern = @"primary execution client is still syncing \((\d+\.\d+)%\)";

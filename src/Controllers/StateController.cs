@@ -44,6 +44,19 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine("Wallet infos: " + result);
             return true;
         }
+
+        [KeepixPluginFn("wallet-fetch")]
+        public static async Task<bool> OnWalletFetch()
+        {
+            var wallet = StateService.FetchNodeWallet();
+            if (string.IsNullOrEmpty(wallet)) {
+                Console.WriteLine("You have no wallet loaded yet in your node, please use wallet-import function accordly.");
+                return false;
+            }
+
+            Console.WriteLine(wallet);
+            return true;
+        }
         
     }
 }
