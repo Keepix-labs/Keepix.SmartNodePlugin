@@ -5,18 +5,20 @@ import Field from "../components/Field/Field";
 import "./Home.scss";
 import { safeFetch } from "../lib/utils";
 import { KEEPIX_API_URL } from "../constants";
+import { useQuery } from "@tanstack/react-query";
+import { getPluginStatus, getPluginWallet } from "../queries/api";
 
 export default function HomeView() {
-  const [status, setStatus] = useState<any | null>(null);
+  const statusQuery = useQuery({
+    queryKey: ["getPluginStatus"],
+    queryFn: getPluginStatus,
+    refetchInterval: 2000
+  });
 
-  const fetchCmdUrl = `${KEEPIX_API_URL}/plugins/Keepix.SmartNodePlugin`;
-
-  useEffect(() => {
-    const fetchDataInterval = setInterval(async () => {
-      setStatus(JSON.parse((await (await safeFetch(`${fetchCmdUrl}/status`)).json()).result));
-    }, 2000);
-    return () => clearInterval(fetchDataInterval);
-  }, []);
+  const walletQuery = useQuery({
+    queryKey: ["getPluginWallet"],
+    queryFn: getPluginWallet
+  });
 
   return (
     <AppsBase
@@ -29,22 +31,22 @@ export default function HomeView() {
           icon="pajamas:status-health"
           status="success"
           title="Status"
-        >{status?.NodeState}</Field>
+        >{statusQuery?.data?.NodeState}</Field>
         {
-          (status?.NodeState !== 'NODE_STOPPED' && status?.NodeState !== 'NO_STATE') ?
+          (statusQuery.data?.NodeState !== 'NODE_STOPPED' && statusQuery.data?.NodeState !== 'NO_STATE') ?
           <Btn
             status="danger"
-            onClick={async () => { await safeFetch(`${fetchCmdUrl}/stop`) }}
+            onClick={async () => { await safeFetch(`${KEEPIX_API_URL}/stop`) }}
           >Stop</Btn>
           :
           <Btn
             status="warning"
-            onClick={async () => { await safeFetch(`${fetchCmdUrl}/start`) }}
+            onClick={async () => { await safeFetch(`${KEEPIX_API_URL}/start`) }}
           >Start</Btn>
         }
         <Btn
           status="warning"
-          onClick={async () => { await safeFetch(`${fetchCmdUrl}/restart`) }}
+          onClick={async () => { await safeFetch(`${KEEPIX_API_URL}/restart`) }}
         >Restart</Btn>
       </div>
       <div className="home-row-full" >
@@ -52,7 +54,7 @@ export default function HomeView() {
           status="success"
           title="Wallet"
           icon="ion:wallet"
-        >0x0cBD6fAdcF8096cC9A43d90B45F65826102e3eCE</Field>
+        >{ walletQuery.data?.Wallet ?? 'No Wallet' }</Field>
       </div>
       <div className="home-row-2" >
         <Field

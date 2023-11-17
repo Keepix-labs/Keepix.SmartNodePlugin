@@ -7,5 +7,8 @@ currentHost = window.location.hostname;
 currentProtocol = window.location.protocol;
 // }
 
+export const PLUGIN_NAME = 'Keepix.SmartNodePlugin';
+export const PLUGIN_API_SUBPATH = `/plugins/${PLUGIN_NAME}`
+
 export const KEEPIX_API_URL =
   process.env.REACT_APP_API_URL || `${currentProtocol}//${currentHost}:${currentProtocol === 'http:' ? 2000 : 9000}`;
