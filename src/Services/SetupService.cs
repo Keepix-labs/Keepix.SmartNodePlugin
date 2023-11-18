@@ -122,7 +122,7 @@ namespace Keepix.SmartNodePlugin.Services
                 var network = installInput.Mainnet ? "mainnet" : "holesky";
 
                 var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                " --executionClient nethermind --consensusClient nimbus";
+                " --executionClient nethermind --consensusClient nimbus --nethermind-containerTag nethermind/nethermind:latest";
 
                 if (network == "mainnet")
                 {
