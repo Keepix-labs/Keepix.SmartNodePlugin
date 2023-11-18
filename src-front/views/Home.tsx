@@ -100,7 +100,7 @@ export default function HomeView() {
           status="gray"
           icon="ph:link"
           color="white"
-        >Graphana</Btn>
+        >Grafana</Btn>
       </div>
       <div className="home-row-full" >
         <Btn

@@ -69,6 +69,14 @@ namespace Keepix.SmartNodePlugin.Controllers
                         stateManager.DB.Store("STATE", PluginStateEnum.NODE_RUNNING);
                         Console.WriteLine("SmartNode successfully started, congratulations on installing your first Ethereum blockchain node!");
                         stateManager.DB.Store("INSTALL", input); //save install input data
+
+                        if (input.WalletMnemonic != null) {
+                            error = StateService.ImportWallet(input.WalletMnemonic, true);
+                            if (!string.IsNullOrEmpty(error)) {
+                                Console.WriteLine("An error occured while trying to import your wallet: " + error);
+                                return false;
+                            }
+                        }
                     }
                     else
                     {
