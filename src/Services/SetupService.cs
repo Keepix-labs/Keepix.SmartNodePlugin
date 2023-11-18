@@ -198,7 +198,7 @@ namespace Keepix.SmartNodePlugin.Services
                     };
                 result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
                 if (!string.IsNullOrEmpty(result) && result.Contains("Deleted Volumes")) {
-                    return string.Empty;
+                    result = string.Empty;
                 }
 
                 try { Shell.ExecuteCommand("docker volume rm keepix_eth1clientdata keepix_eth2clientdata keepix_grafana-storage keepix_prometheus-data"); } catch (Exception) {}
