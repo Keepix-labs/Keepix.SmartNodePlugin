@@ -26,6 +26,15 @@ namespace Keepix.SmartNodePlugin.Storage
             SaveToFile();
         }
 
+        public void UnStore(string id)
+        {
+            if (_store != null && _store.ContainsKey(id))
+            {
+                _store.Remove(id);
+            }
+            SaveToFile();
+        }
+
         public T? Retrieve<T>(string id)
         {
             if (_store == null ||

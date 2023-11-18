@@ -29,6 +29,24 @@ namespace Keepix.SmartNodePlugin.Services
             return result;
         }
 
+        public static string PurgeWallet()
+        {
+            var cli = $"~/bin/rocketpool --allow-root wallet purge";
+
+            var result = Shell.ExecuteCommand(cli, new List<ShellCondition>()
+             {
+                new ShellCondition()
+                {
+                    content = "Do you want to continue?",
+                    answers = new string[] {"y", ""}
+                }
+            });
+            if (result.Contains("Purge complete.")) {
+                return string.Empty;
+            }
+            return result;
+        }
+
         public static string ExportWallet()
         {
             var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root wallet export", new List<ShellCondition>()

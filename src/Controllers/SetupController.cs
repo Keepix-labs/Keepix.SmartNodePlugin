@@ -83,11 +83,9 @@ namespace Keepix.SmartNodePlugin.Controllers
                         Console.WriteLine("Error while trying to trying to start the smartnode: " + error);
                         return false;
                     }
-                } else { 
+                } else {
                      stateManager.DB.Store("STATE", PluginStateEnum.NODE_STOPPED);
                 }
-
-
             }
             else
             {
@@ -95,8 +93,6 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             // SETUP SMART NODE END //
-
-
             return true;
         }
 
@@ -217,20 +213,18 @@ namespace Keepix.SmartNodePlugin.Controllers
                 Console.WriteLine("Docker is not live on your device, please start it");
                 return false;
             }
-                stateManager = PluginStateManager.GetStateManager();
-                  if (stateManager.State == PluginStateEnum.NO_STATE) {
-                    Console.WriteLine("The smart-node is not installed!");
-                    return true;
-                }
-
-                stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
-                string error = SetupService.RemoveNode(stateManager);
-                if (!string.IsNullOrEmpty(error)) {
-                    Console.WriteLine("Some errors occured while trying to uninstall the Smartnode " + error);
-                    return false;
-                }
-                Console.WriteLine("Smart-node successfully uninstalled");
-            
+            stateManager = PluginStateManager.GetStateManager();
+                if (stateManager.State == PluginStateEnum.NO_STATE) {
+                Console.WriteLine("The smart-node is not installed!");
+                return true;
+            }
+            stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
+            string error = SetupService.RemoveNode(stateManager);
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine("Some errors occured while trying to uninstall the Smartnode " + error);
+                return false;
+            }
+            Console.WriteLine("Smart-node successfully uninstalled");
             return true;
         }
     }
