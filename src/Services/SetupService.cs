@@ -206,7 +206,7 @@ namespace Keepix.SmartNodePlugin.Services
 
                 try { Shell.ExecuteCommand("rm -rf ~/.rocketpool"); } catch (Exception) { }
                 try { Shell.ExecuteCommand("rm -rf ./data/db.store"); } catch (Exception) { }
-                result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool --allow-root");
+                result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
 
             } catch (Exception) {
                 return result;
