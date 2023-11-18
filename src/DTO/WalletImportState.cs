@@ -8,7 +8,7 @@ namespace Keepix.SmartNodePlugin
 {
     internal class WalletImportState
     {
-        public string? Mnemonic { get;set;}
+        public bool Loaded { get;set; }
         public bool ImportedOnValidator{get;set;}
     }
 }

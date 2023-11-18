@@ -71,10 +71,20 @@ namespace Keepix.SmartNodePlugin.Controllers
                         stateManager.DB.Store("INSTALL", input); //save install input data
 
                         if (input.WalletMnemonic != null) {
+                            // waiting 10secs to make sure the node is correctly started
+                            Thread.Sleep(TimeSpan.FromSeconds(10));
                             error = StateService.ImportWallet(input.WalletMnemonic, true);
                             if (!string.IsNullOrEmpty(error)) {
-                                Console.WriteLine("An error occured while trying to import your wallet: " + error);
+                                Console.WriteLine("An error occured while trying to import your wallet, please install the plugin again: " + error);
                                 return false;
+                            }
+                            else 
+                            {
+                                Console.WriteLine("Mnemonic wallet successfully imported in the smart-node without validator keys.");
+                                WalletImportState walletState = new WalletImportState() {
+                                    Loaded = true, ImportedOnValidator = false
+                                };
+                                stateManager.DB.Store("WALLET_STATE", walletState);
                             }
                         }
                     }
