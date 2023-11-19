@@ -104,6 +104,15 @@ namespace Keepix.SmartNodePlugin.Controllers
             }
             return true;
         }
+
+        [KeepixPluginFn("rpl-fetch")]
+        public static async Task<string> OnStakedRpl()
+        {
+            var amount = StateService.getTotalRPLStaked();
+            return JsonConvert.SerializeObject(new {
+                amount
+            });
+        }
         
     }
 }

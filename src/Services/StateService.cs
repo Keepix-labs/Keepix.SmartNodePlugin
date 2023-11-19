@@ -114,5 +114,19 @@ namespace Keepix.SmartNodePlugin.Services
 
             return result;
         }
+
+        public static string getTotalRPLStaked() {
+            string amount = "0";
+            try {
+                var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
+                string pattern = @"(\d+\.\d+) RPL";
+
+                Match match = Regex.Match(result, pattern);
+                if (match.Success)
+                    return match.Groups[1].Value;
+            }
+            catch (Exception) {return "0";}
+            return amount;
+        }
     }
 }
