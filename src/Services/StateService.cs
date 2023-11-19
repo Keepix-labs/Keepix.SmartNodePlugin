@@ -119,7 +119,7 @@ namespace Keepix.SmartNodePlugin.Services
             string amount = "0";
             try {
                 var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
-                string pattern = @"(\d+\.\d+) RPL";
+                string pattern = @"total stake of (\d+\.\d+) RPL";
 
                 Match match = Regex.Match(result, pattern);
                 if (match.Success)

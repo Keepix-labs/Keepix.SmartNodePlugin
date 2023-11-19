@@ -13,19 +13,8 @@ namespace Keepix.SmartNodePlugin.Services
         {
             int poolSize = smallPool ? 8 : 16;
             // smallPool true = 8ETH / smallPool false = 16 ETH
-            string result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node deposit", new List<ShellCondition>
-            {
-                new ShellCondition()
-                {
-                    content = "by creating a new minipool, your node will automatically claim",
-                    answers = new string[] {"y", ""}
-                },
-                new ShellCondition()
-                {
-                    content = "Please choose an amount of ETH to deposit",
-                    answers = smallPool ? new string[] { "1", "" } : new string[] { "2", "" }
-                }
-            });
+            string result = Shell.ExecuteCommand($"~/bin/rocketpool --allow-root node deposit --amount {poolSize} --yes");
+
             if (result.Contains("not enough to create a minipool")) {
                 return $"You do not have a sufficient ETH balance on your wallet to create a {poolSize} ETH pool";
             }
