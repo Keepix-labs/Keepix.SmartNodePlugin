@@ -105,6 +105,8 @@ namespace Keepix.SmartNodePlugin.Controllers
             return true;
         }
 
+        //TODO: total eth staked, parse minipools amount value
+
         [KeepixPluginFn("rpl-fetch")]
         public static async Task<string> OnStakedRpl()
         {
@@ -123,6 +125,8 @@ namespace Keepix.SmartNodePlugin.Controllers
                 pools
             });
         }
+
+        
         
     }
 }

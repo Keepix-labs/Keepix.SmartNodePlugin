@@ -40,6 +40,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             string error = PoolService.StakeRPL(input.Amount);
             if (!string.IsNullOrEmpty(error)) {
                 Console.WriteLine($"An error occured while trying to stake RPL: {error}");
+                return false;
             }
 
             Console.WriteLine($"You successfully staked {input.Amount} RPL.");
@@ -70,6 +71,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             var error = PoolService.CreateMiniPool(input.SmallPool);
             if (!string.IsNullOrEmpty(error)) {
                 Console.WriteLine($"An error occured while trying to stake ETH: {error}");
+                return false;
             }
 
             Console.WriteLine($"You successfully staked {poolSize} ETH on the Ethereum network, congratulations!");
