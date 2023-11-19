@@ -76,6 +76,15 @@ namespace Keepix.SmartNodePlugin.Controllers
                             // waiting 10secs to make sure the node is correctly started
                             Thread.Sleep(TimeSpan.FromSeconds(10));
                             error = StateService.ImportWallet(input.WalletMnemonic, true);
+                            if (!string.IsNullOrEmpty(error) && error.Contains("wallet is already initialized")) {
+                                error = StateService.PurgeWallet();
+                                if (!string.IsNullOrEmpty(error)) {
+                                    Console.WriteLine("An error occured while trying to import your wallet, please install the plugin again: " + error);
+                                    return false;
+                                }
+                                // retry
+                                error = StateService.ImportWallet(input.WalletMnemonic, true);
+                            }
                             if (!string.IsNullOrEmpty(error)) {
                                 Console.WriteLine("An error occured while trying to import your wallet, please install the plugin again: " + error);
                                 return false;

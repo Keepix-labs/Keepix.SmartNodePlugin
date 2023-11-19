@@ -1,6 +1,6 @@
 {
     "name": "keepix-plugin-smart-node-build",
-    "version": "0.0.20",
+    "version": "0.0.21",
     "dependencies": {},
     "scripts": {
         "start": "echo 'hello'"
