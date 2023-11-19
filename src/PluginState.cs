@@ -24,16 +24,26 @@ namespace Keepix.SmartNodePlugin
     internal class PluginStateManager
     {
         public PluginStateEnum State { get; set; }
+        public string Step { get; set; }
         public JsonObjectStore DB { get; set; }
+
+        public static string GetStoragePath()
+        {
+            string pluginsFolder = Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".keepix/plugins");
+            if (!Directory.Exists(pluginsFolder)) {
+                try { Directory.CreateDirectory(pluginsFolder); } catch (Exception) {}
+            }
+            string pluginFolder = Path.Combine(pluginsFolder, "smart-node-plugin");
+            if (!Directory.Exists(pluginFolder)) {
+                try { Directory.CreateDirectory(pluginFolder); } catch (Exception) {}
+            }
+            return pluginFolder;
+        }
 
         public static PluginStateManager LoadStateManager()
         {
-            string dataFolder = "./data";
-            if (!Directory.Exists(dataFolder)) {
-                try { Directory.CreateDirectory(dataFolder); } catch (Exception) {}
-            }
-            var currentDir = Directory.GetCurrentDirectory();
-            string dbPath = Path.Combine(currentDir, "data/db.store");
+            string storageFolder = GetStoragePath();
+            string dbPath = Path.Combine(storageFolder, "db.store");
 
             var stateManager = new PluginStateManager() {
                 DB = new JsonObjectStore(dbPath)
@@ -43,6 +53,14 @@ namespace Keepix.SmartNodePlugin
             } 
             catch (KeyNotFoundException) {
                 stateManager.State = PluginStateEnum.NO_STATE;
+            }
+            
+            // for know the global steps.
+            try {
+                stateManager.Step = stateManager.DB.Retrieve<string>("STEP");
+            } 
+            catch (KeyNotFoundException) {
+                stateManager.Step = "";
             }
             return stateManager;
         }

@@ -7,6 +7,7 @@ namespace Keepix.SmartNodePlugin.Services
 {
     internal class SetupService
     {
+
         public static bool isDockerRunning()
         {
             try
@@ -175,38 +176,104 @@ namespace Keepix.SmartNodePlugin.Services
             return string.Empty;
         }
 
+        public static bool VerifyInstallation(PluginStateManager stateManager)
+        {
+            string containersList = GetContainers(stateManager);
+            string[] containers = containersList.Split(' ');
+
+            bool dockersIsAlive = true;
+            foreach (var containerKey in containers) {
+                try {
+                    var stdOut = Shell.ExecuteCommand($"docker container inspect {containerKey}");
+                    if (stdOut.Contains("No such container")) {
+                        dockersIsAlive = false;
+                        Console.WriteLine($"Container {containerKey} not found.");
+                        break ;
+                    }
+                } catch(Exception) {
+                    dockersIsAlive = false;
+                    Console.WriteLine($"Container {containerKey} Error.");
+                    break ;
+                }
+            }
+
+            string volumesList = GetVolumes();
+            string[] volumes = volumesList.Split(' ');
+
+            bool volumesIsAlive = true;
+            foreach (var volumeKey in volumes) {
+                try {
+                    var stdOut = Shell.ExecuteCommand($"docker volume inspect {volumeKey}");
+                    if (stdOut.Contains($"no such volume")) {
+                        volumesIsAlive = false;
+                        Console.WriteLine($"Volume {volumeKey} not found.");
+                        break ;
+                    }
+                } catch(Exception) {
+                    volumesIsAlive = false;
+                    Console.WriteLine($"Volume {volumeKey} Error.");
+                    break ;
+                }
+            }
+
+            string networksList = GetNetworks();
+            string[] networks = networksList.Split(' ');
+
+            bool networksIsAlive = true;
+            foreach (var networkKey in networks) {
+                try {
+                    var stdOut = Shell.ExecuteCommand($"docker network inspect {networkKey}");
+                    if (stdOut.Contains($"network {networkKey} not found")) {
+                        networksIsAlive = false;
+                        Console.WriteLine($"Network {networkKey} not found.");
+                        break ;
+                    }
+                } catch(Exception e) {
+                    networksIsAlive = false;
+                    Console.WriteLine($"Network {networkKey} Error.");
+                    break ;
+                }
+            }
+            return dockersIsAlive && volumesIsAlive && networksIsAlive;
+        }
+
         public static string RemoveNode(PluginStateManager stateManager)
         {
             string result = string.Empty;
             try {
                 result = StopNode();
-                string containers = "keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_grafana keepix_prometheus";
+                string containers = GetContainers(stateManager);
+                string volumes = GetVolumes();
+                string networks = GetNetworks();
                 
-                InstallInput? input = stateManager.DB.Retrieve<InstallInput>("INSTALL");
-                //adding mev boost containers also if chosen in settings of installation
-                if (input != null && input.EnableMEV && input.Mainnet) {
-                    containers += " keepix_mev-boost";
-                }
-                
+                Console.WriteLine($"stop containers {containers}");
                 try { Shell.ExecuteCommand($"docker stop {containers}"); } catch (Exception) {}
+                Console.WriteLine($"rm containers {containers}");
                 try { Shell.ExecuteCommand($"docker rm {containers}"); } catch (Exception) {}
-                
-                ShellCondition conditions = new ShellCondition()
+                Console.WriteLine($"volume prune.");
+                try {
+                    ShellCondition conditions = new ShellCondition()
                     {
                         content = "This will remove anonymous local volumes",
                         answers = new string[] {"y", ""}
                     };
-                result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
-                if (!string.IsNullOrEmpty(result) && result.Contains("Deleted Volumes")) {
-                    result = string.Empty;
-                }
-
-                try { Shell.ExecuteCommand("docker volume rm keepix_eth1clientdata keepix_eth2clientdata keepix_grafana-storage keepix_prometheus-data"); } catch (Exception) {}
-                try { Shell.ExecuteCommand("docker network rm keepix_monitor-net keepix_net"); } catch (Exception) {}
-
+                    result = Shell.ExecuteCommand("docker volume prune", new List<ShellCondition>() { conditions } );
+                    if (!string.IsNullOrEmpty(result) && result.Contains("Deleted Volumes")) {
+                        result = string.Empty;
+                    }
+                } catch (Exception) {}
+                Console.WriteLine($"volume rm {volumes}");
+                try { Shell.ExecuteCommand($"docker volume rm {volumes}"); } catch (Exception) {}
+                Console.WriteLine($"network rm {networks}");
+                try { Shell.ExecuteCommand($"docker network rm {networks}"); } catch (Exception) {}
+                Console.WriteLine($"rm ~/.rocketpool");
                 try { Shell.ExecuteCommand("rm -rf ~/.rocketpool"); } catch (Exception) { }
-                try { Shell.ExecuteCommand("rm -rf ./data/db.store"); } catch (Exception) { }
-                result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
+                Console.WriteLine($"rm db.store");
+                try { stateManager.DB.Clean(); } catch (Exception) { }
+                Console.WriteLine($"rm ~/bin/rocketpool");
+                try {
+                    result = Shell.ExecuteCommand("rm -rf ~/bin/rocketpool");
+                } catch(Exception) {}
 
             } catch (Exception) {
                 return result;
@@ -276,6 +343,28 @@ namespace Keepix.SmartNodePlugin.Services
             }
 
             return result;
+        }
+
+        private static string GetContainers(PluginStateManager stateManager)
+        {
+            string containers = "keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_grafana keepix_prometheus";
+                
+            InstallInput? input = stateManager.DB.Retrieve<InstallInput>("INSTALL");
+            //adding mev boost containers also if chosen in settings of installation
+            if (input != null && input.EnableMEV && input.Mainnet) {
+                containers += " keepix_mev-boost";
+            }
+            return containers;
+        }
+
+        private static string GetVolumes()
+        {
+            return "keepix_eth1clientdata keepix_eth2clientdata keepix_grafana-storage keepix_prometheus-data";
+        }
+
+        private static string GetNetworks()
+        {
+            return "keepix_monitor-net keepix_net";
         }
     }
 }

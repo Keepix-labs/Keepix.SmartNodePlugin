@@ -24,13 +24,15 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             stateManager = PluginStateManager.GetStateManager();
-            if (stateManager.State != PluginStateEnum.NO_STATE) {
-                Console.WriteLine("The smart-node is already in a running state or the installation failed, please uninstall first before a new installation. USE WITH CAUTION.");
+            if (stateManager.Step.Equals("INSTALLED")) {
+                Console.WriteLine("The smart-node is already Installed.");
                 return false;
             }
-
+            // if (stateManager.State != PluginStateEnum.NO_STATE) {
+            //     Console.WriteLine("The smart-node is already in a running state or the installation failed, please uninstall first before a new installation. USE WITH CAUTION.");
+            //     return false;
+            // }
             stateManager.DB.Store("STATE", PluginStateEnum.STARTING_INSTALLATION);
-
             //  SETUP CLI START //
             string error = string.Empty;
             if (!SetupService.isCliInstalled())
@@ -103,6 +105,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             // SETUP SMART NODE END //
+            stateManager.DB.Store("STEP", "INSTALLED");
             return true;
         }
 
@@ -224,10 +227,14 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             stateManager = PluginStateManager.GetStateManager();
-                if (stateManager.State == PluginStateEnum.NO_STATE) {
+            if (!stateManager.Step.Equals("INSTALLED")) {
                 Console.WriteLine("The smart-node is not installed!");
                 return true;
             }
+            // if (stateManager.State == PluginStateEnum.NO_STATE) {
+            //     Console.WriteLine("The smart-node is not installed!");
+            //     return true;
+            // }
             stateManager.DB.Store("STATE", PluginStateEnum.NO_STATE);
             string error = SetupService.RemoveNode(stateManager);
             if (!string.IsNullOrEmpty(error)) {
@@ -246,6 +253,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 Console.WriteLine("Docker is not live on your device, please start it");
                 return false;
             }
+            stateManager = PluginStateManager.GetStateManager();
             bool isSync = StateService.IsNodeSynced();
             if (!isSync) {
                 Console.WriteLine("Your node must be synchronized first before registration");
@@ -260,6 +268,18 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine("Your node has been successfully registered on the network, you can now stake on the RocketPool Protocol.");
             stateManager.DB.Store("REGISTERED", true);
             return true;
+        }
+
+        [KeepixPluginFn("verify-installation")]
+        public static async Task<bool> OnVerifyInstallation()
+        {
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
+            stateManager = PluginStateManager.GetStateManager();
+            return SetupService.VerifyInstallation(stateManager);
         }
     }
 }

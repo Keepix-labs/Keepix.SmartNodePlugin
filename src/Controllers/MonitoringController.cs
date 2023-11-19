@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -57,6 +58,12 @@ namespace Keepix.SmartNodePlugin.Controllers
             return JsonConvert.SerializeObject(new {
                 logs
             });
+        }
+
+        [KeepixPluginFn("storage-path")]
+        public static async Task<string> getStoragePath()
+        {
+            return PluginStateManager.GetStoragePath();
         }
     }
 }

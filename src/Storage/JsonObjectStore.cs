@@ -58,5 +58,10 @@ namespace Keepix.SmartNodePlugin.Storage
             string json = JsonSerializer.Serialize(_store);
             File.WriteAllText(_filePath, json);
         }
+
+        public void Clean()
+        {
+            File.Delete(_filePath);
+        }
     }
 }
