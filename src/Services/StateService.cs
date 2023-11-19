@@ -128,5 +128,10 @@ namespace Keepix.SmartNodePlugin.Services
             catch (Exception) {return "0";}
             return amount;
         }
+
+        public static string getMiniPools() {
+            string result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root minipool status");
+            return result;
+        }
     }
 }

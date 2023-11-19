@@ -22,6 +22,11 @@ namespace Keepix.SmartNodePlugin.Services
             if (result.Contains("not staked enough RPL")) {
                 return $"You did not staked enough RPL to create a minipool of {poolSize} please add more first, be sure to always over-collateralize your holding.";
             }
+
+            if (result.Contains("Your minipool is now in Initialized status")) {
+                return string.Empty;
+            }
+
             return result;
         }
 

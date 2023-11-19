@@ -113,6 +113,16 @@ namespace Keepix.SmartNodePlugin.Controllers
                 amount
             });
         }
+
+        
+        [KeepixPluginFn("minipool-fetch")]
+        public static async Task<string> OnMiniPoolFetch()
+        {
+            var pools = StateService.getMiniPools();
+            return JsonConvert.SerializeObject(new {
+                pools
+            });
+        }
         
     }
 }
