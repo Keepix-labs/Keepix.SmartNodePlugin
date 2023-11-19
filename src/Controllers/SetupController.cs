@@ -237,5 +237,29 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine("Smart-node successfully uninstalled");
             return true;
         }
+
+        [KeepixPluginFn("register-node")]
+        public static async Task<bool> OnRegisterNode()
+        {
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
+            bool isSync = StateService.IsNodeSynced();
+            if (!isSync) {
+                Console.WriteLine("Your node must be synchronized first before registration");
+                return false;
+            }
+
+            string error = SetupService.RegisterNode();
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine("Some errors occured while trying to register the node on network " + error);
+                return false;
+            }
+            Console.WriteLine("Your node has been successfully registered on the network, you can now stake on the RocketPool Protocol.");
+            stateManager.DB.Store("REGISTERED", true);
+            return true;
+        }
     }
 }

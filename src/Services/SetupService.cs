@@ -239,5 +239,43 @@ namespace Keepix.SmartNodePlugin.Services
             }
             return result;
         }
+
+        public static string RegisterNode()
+        {
+            string timezone = OS.GetTimeZone();
+            if (string.IsNullOrEmpty(timezone)) {
+                return "Can't find the timezone of your machine, please set it manually or contact support.";
+            }
+
+            var cli = $"~/bin/rocketpool --allow-root node register --timezone {timezone}";
+            var result = Shell.ExecuteCommand(cli, new List<ShellCondition>() {
+                new ShellCondition()
+                {
+                    content = "These prices include a maximum priority fee",
+                    answers = new string[] {""}
+                },
+                new ShellCondition()
+                {
+                    content = "Using a max fee of",
+                    answers = new string[] {"y", ""}
+                }} );
+            if (result.Contains("Invalid timezone location")) {
+                return $"Invalid timezone {timezone} on your machine, please set it manually or contact support.";
+            }
+
+            if (result.Contains("clients not ready")) {
+                return "Your node is not correctly synchronized, please restart, wait or reinstall it";
+            }
+
+            if (result.Contains("not enough to pay for this transaction")) {
+                return "Please send ETH to your wallet to register your node on the network, your balance is not enough to cover the fees.";
+            }
+
+            if (result.Contains("The node was successfully registered with Rocket Pool")) {
+                return string.Empty;
+            }
+
+            return result;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -17,10 +18,13 @@ namespace Keepix.SmartNodePlugin.Controllers
         [KeepixPluginFn("status")]
         public static async Task<string> OnStatus(InstallInput input)
         {
+            bool isNodeRegistered = false;
             stateManager = PluginStateManager.GetStateManager();
+            try { isNodeRegistered = stateManager.DB.Retrieve<bool>("REGISTERED"); } catch(Exception) {}
             return JsonConvert.SerializeObject(new {
                 NodeState = stateManager.State.ToString(),
-                Alive = SetupService.IsNodeRunning()
+                Alive = SetupService.IsNodeRunning(),
+                IsRegistered = isNodeRegistered
             });
         }
 

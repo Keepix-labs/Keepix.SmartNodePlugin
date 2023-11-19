@@ -20,5 +20,12 @@ namespace Keepix.SmartNodePlugin.Utils
                 return OSPlatform.Windows;
             }
         }
+        
+        public static string GetTimeZone()
+        {
+            string timezone;
+            try { timezone = Shell.ExecuteCommand("cat /etc/timezone"); } catch (Exception) { return string.Empty; }
+            return timezone.Trim();
+        }
     }
 }
