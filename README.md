@@ -53,7 +53,7 @@ Warn attention to set the path of the plugin correctly on the package.json at th
 The plugin using the Keepix.PluginSystem library who override the STDout and STDerr and format an result like this:  
 `{ "jsonResult": "{ \"x\": \"x\" }", "stdOut": "logs" }`  
 
-The plugin using the [KeepixPluginFn("function-name")] annotation for exposing functions.
+The plugin using the [KeepixPluginFn("key-name")] annotation for exposing functions.
 
 Manually CLI Input example [running install function]:
 `./Plugin.SmartNodePlugin '{ "key": "install", "data1": "a", "data2": "b" }'`  
