@@ -124,7 +124,9 @@ namespace Keepix.SmartNodePlugin.Services
                 {
                     return matches[matches.Count - 1].Value.Replace("%", "").Replace("queue", "").Replace("|", "").Replace(")", "").Replace("(", "").Trim();
                 }
-            } catch (Exception) { }
+            } catch (Exception error) {
+                Console.WriteLine(error);
+            }
             return "0";
         }
 
@@ -138,7 +140,9 @@ namespace Keepix.SmartNodePlugin.Services
                 {
                     return matches[matches.Count - 1].Value.Replace("%", "").Replace(")", "").Replace("(", "").Trim();
                 }
-            } catch (Exception) { }
+            } catch (Exception error) {
+                Console.WriteLine(error);
+            }
             return "0";
         }
 
