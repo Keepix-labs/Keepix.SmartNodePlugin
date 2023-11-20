@@ -107,6 +107,39 @@ namespace Keepix.SmartNodePlugin.Services
             return false;
         }
 
+        public static (string executionSyncProgress, string consensusSyncProgress) GetPercentSync2()
+        {
+            return (GetPercentSyncEth1(), GetPercentSyncEth2());
+        }
+
+        public static string GetPercentSyncEth1()
+        {
+            try {
+                var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
+                string pattern = @"\(\s[\d]+\.[\d]+ %\) \| queue";
+                MatchCollection matches = Regex.Matches(result, pattern);
+                if (matches.Count > 0)
+                {
+                    return matches[matches.Count - 1].Value;
+                }
+            } catch (Exception) { }
+            return "0";
+        }
+
+        public static string GetPercentSyncEth2()
+        {
+            try {
+                var result = Shell.ExecuteCommand("docker container logs keepix_eth2");
+                string pattern = @"\(\s[\d]+\.[\d]+%\)";
+                MatchCollection matches = Regex.Matches(result, pattern);
+                if (matches.Count > 0)
+                {
+                    return matches[matches.Count - 1].Value;
+                }
+            } catch (Exception) { }
+            return "0";
+        }
+
         public static string getLogs(bool eth1)
         {
             var cli = eth1 ?  "~/bin/rocketpool --allow-root service logs eth1" : " ~/bin/rocketpool --allow-root service logs eth2";
