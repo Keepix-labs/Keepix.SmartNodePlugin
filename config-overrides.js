@@ -57,7 +57,7 @@ const executeServer = () => {
             execPluginFunction(dto).then((result) => {
                 runningTasks[taskId] = {
                     status: 'FINISHED',
-                    result: result
+                    description: result
                 };
             });
 
