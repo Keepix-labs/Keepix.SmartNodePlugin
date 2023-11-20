@@ -112,6 +112,16 @@ public static async Task<bool> OnUninstall()
     return true;
 }
 ```  
+
+Installed (return boolean true if plugin is installed else false) function called at any time for display the plugin if the npm package exists 
+```bash
+               [KeepixPluginFn("installed")]
+public static async Task<bool> OnInstalled()
+{
+    stateManager = PluginStateManager.GetStateManager();
+    return stateManager.Installed;
+}
+```  
   
 Example of exposed function who return data:  
 ```bash
