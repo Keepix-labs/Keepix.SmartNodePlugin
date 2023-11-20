@@ -146,7 +146,7 @@ And in the src-front/constants.ts:
 ### Plugin Dev Api from Front-end dev
   
 For developping locally your plugin on the config-overrides.js you can see a  
-express.js server simulation the routes of the real keepix server  
+express.js running on 0.0.0.0:2000 is a simulation server copying routes of the real keepix server.  
 
 `GET /plugins/nameOfThePlugin/:key`  
 `POST /plugins/nameOfThePlugin/:key`  
