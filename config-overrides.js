@@ -31,7 +31,7 @@ const executeServer = () => {
 
     app.use(cors());
     app.use(express.json());
-    app.set('port', 2000);
+    app.set('port', process.env.PORT || 2000);
     app.set('host', '0.0.0.0');
     var runningTasks = {};
 
