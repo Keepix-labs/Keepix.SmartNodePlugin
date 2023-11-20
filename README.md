@@ -153,6 +153,33 @@ express.js running on 0.0.0.0:2000 is a simulation server copying routes of the 
 `GET /plugins/nameOfThePlugin/watch/tasks/:taskId`  
 
 Enjoy now you are ready for build a new Keepix plugin, Nice Coding!  
+Ps: when you are ready for publishing you Plugin go to the Publish directory section ->   
+
+## Publish Directory
+  
+Example of build directory for the plugin Keepix.SmartNodePlugin  
+  
+```bash
+/buid  
+  /dist  
+    /linux-arm64  
+      Keepix.SmartNodePlugin  
+    /linux-x64  
+      Keepix.SmartNodePlugin  
+    /win-x64  
+      Keepix.SmartNodePlugin  
+    /win-arm64  
+      Keepix.SmartNodePlugin  
+    /osx-x64  
+      Keepix.SmartNodePlugin  
+    /osx-arm64  
+      Keepix.SmartNodePlugin  
+  index.html
+  package.json
+```
+  
+When you are ready you can npm run publish the build directory.  
+After this step you need to creating a pull request on the https://github.com/Keepix-labs/Keepix.Plugins repository for adding your plugin on the official list of plugin and just waiting 10 minutes on the keepix-server for see your plugin on the store.  
 
 ## Contributors
 
