@@ -51,7 +51,7 @@ Warn attention to set the path of the plugin correctly on the package.json at th
 ### Plugin Dotnet
 
 The plugin using the Keepix.PluginSystem library who override the STDout and STDerr and format an result like this:  
-`{ "result": "{ \"x\": \"x\" }", "stdOut": "logs" }`  
+`{ "jsonResult": "{ \"x\": \"x\" }", "stdOut": "logs" }`  
 
 The plugin using the [KeepixPluginFn("function-name")] annotation for exposing functions.
 
