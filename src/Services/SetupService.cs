@@ -123,7 +123,7 @@ namespace Keepix.SmartNodePlugin.Services
                 var network = installInput.Mainnet ? "mainnet" : "holesky";
 
                 var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                " --executionClient nethermind --consensusClient nimbus --nethermind-containerTag nethermind/nethermind:latest";
+                " --executionClient nethermind --consensusClient nimbus --nethermind-containerTag nethermind/nethermind:1.22.0";
 
                 if (network == "mainnet")
                 {
@@ -136,6 +136,8 @@ namespace Keepix.SmartNodePlugin.Services
                 if (installInput.EnableMEV) {
                     cli += " --mevBoost-mode local --mevBoost-selectionMode profile --mevBoost-enableUnregulatedAllMev";
                 }
+
+                Console.WriteLine($"CLI Config Smart Node {cli}");
 
                 result = Shell.ExecuteCommand(cli);
                 if (result.Trim().Length > 0) {

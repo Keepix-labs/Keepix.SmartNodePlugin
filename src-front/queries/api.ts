@@ -17,6 +17,14 @@ export const getPluginWallet = async () =>
     parser: (data: any) => { return JSON.parse(data.result); } 
   });
 
+export const getPluginSyncProgress = async () => 
+  request<any>({
+    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/sync-state`,
+    method: 'GET',
+    name: "getPluginSyncProgress",
+    parser: (data: any) => { return JSON.parse(data.result); } 
+  });
+
 // Functions
 async function request<T>(options: any) {
   if (options.method === undefined) {
