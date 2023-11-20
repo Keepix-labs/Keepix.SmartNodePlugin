@@ -142,7 +142,9 @@ Here the plugin Name is 'Keepix.SmartNodePlugin' but in function of your plugin 
 And in the src-front/constants.ts:  
   
 `export const PLUGIN_NAME = 'Keepix.SmartNodePlugin';`  
-
+  
+### Plugin Dev Api from Front-end dev
+  
 For developping locally your plugin on the config-overrides.js you can see a  
 express.js server simulation the routes of the real keepix server  
 
