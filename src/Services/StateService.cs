@@ -4,6 +4,8 @@ using Keepix.SmartNodePlugin.DTO.Input;
 using System.Xml.XPath;
 using System.Text.RegularExpressions;
 using System.Text.Json;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Keepix.SmartNodePlugin.Services
 {
@@ -120,7 +122,7 @@ namespace Keepix.SmartNodePlugin.Services
                 MatchCollection matches = Regex.Matches(result, pattern);
                 if (matches.Count > 0)
                 {
-                    return matches[matches.Count - 1].Value;
+                    return matches[matches.Count - 1].Value.Replace("%", "").Replace("queue", "").Replace("|", "").Replace(")", "").Replace("(", "").Trim();
                 }
             } catch (Exception) { }
             return "0";
@@ -134,7 +136,7 @@ namespace Keepix.SmartNodePlugin.Services
                 MatchCollection matches = Regex.Matches(result, pattern);
                 if (matches.Count > 0)
                 {
-                    return matches[matches.Count - 1].Value;
+                    return matches[matches.Count - 1].Value.Replace("%", "").Replace(")", "").Replace("(", "").Trim();
                 }
             } catch (Exception) { }
             return "0";
