@@ -10,18 +10,25 @@ import Sprites from "../components/Sprites/Sprites";
 import BigLoader from "../components/BigLoader/BigLoader";
 import BannerAlert from "../components/BannerAlert/BannerAlert";
 import BigLogo from "../components/BigLogo/BigLogo";
+import { Icon } from "@iconify-icon/react";
 
 export default function HomePage() {
   const [loading, setLoading] = useState(false);
-  const statusQuery = useQuery({
-    queryKey: ["getPluginStatus"],
-    queryFn: getPluginStatus,
-    refetchInterval: 2000
-  });
-
+  
   const walletQuery = useQuery({
     queryKey: ["getPluginWallet"],
     queryFn: getPluginWallet
+  });
+
+  const statusQuery = useQuery({
+    queryKey: ["getPluginStatus"],
+    queryFn: async () => {
+      if (walletQuery.data === undefined) { // wallet check required before anything
+        await walletQuery.refetch();
+      }
+      return getPluginStatus();
+    },
+    refetchInterval: 2000
   });
 
   const syncProgressQuery = useQuery({
@@ -61,14 +68,24 @@ export default function HomePage() {
         && !syncProgressQuery?.data
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
         && walletQuery.data?.Wallet !== undefined && (
-        <BigLoader title="" full={true}></BigLoader>
+        <BigLoader title="" label="Retrieving synchronization information" full={true}></BigLoader>
       )}
       {statusQuery?.data
         && syncProgressQuery?.data
         && syncProgressQuery?.data?.IsSynced === false
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
         && walletQuery.data?.Wallet !== undefined && (
-        <BigLoader title="Synchonization In Progress" label={`ExecutionSyncProgress: ${syncProgressQuery?.data.executionSyncProgress}% - ConsensusSyncProgress: ${syncProgressQuery?.data.consensusSyncProgress}%`} full={true}></BigLoader>
+        <BigLoader title="Synchonization In Progress" disableLabel={true} full={true}>
+          <div className="state-title">
+                <strong>{`ExecutionSyncProgress: ${syncProgressQuery?.data.executionSyncProgress}%`}</strong>
+                <strong>{`ConsensusSyncProgress: ${syncProgressQuery?.data.consensusSyncProgress}%`}</strong>
+                <strong><Icon icon="svg-spinners:3-dots-scale" /></strong>
+          </div>
+          <Btn
+              status="danger"
+              onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/stop`) }}
+            >Stop</Btn>
+        </BigLoader>
       )}
       {statusQuery?.data && syncProgressQuery?.data
         && syncProgressQuery?.data?.IsSynced === true

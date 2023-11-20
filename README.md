@@ -58,6 +58,10 @@ The plugin using the [KeepixPluginFn("function-name")] annotation for exposing f
 Example of input for running manually one function:
 `./Plugin.SmartNodePlugin '{ "key": "install", "data1": "a", "data2": "b" }'` 
 
+Example of output from a manual running:
+`./Plugin.SmartNodePlugin '{ "key": "status" }'` 
+`{ "jsonResult": "{ \"status\": \"RUNNING\" }", "stdOut": "Checking on docker ...\n Check Ok..\nReturn result" }` 
+
 Example of queries for running from the front-end one function on the debug server (Runned at the npm run start moment):  
   
 ```bash

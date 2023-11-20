@@ -11,7 +11,9 @@ type Data = {
 export default function BigLoader({
   title,
   label = 'Loading',
-  full = false 
+  full = false,
+  disableLabel = false,
+  children
 }: any) {
   return (
     <div className={`transfer card card-default`} style={{ height: full ? '100vh' : undefined }}>
@@ -19,10 +21,13 @@ export default function BigLoader({
             <div className="state-logo">
             <Logo text={false} />
             </div>
-            <div className="state-title">
-                <span>{title}</span>
-                <strong>{label} <Icon icon="svg-spinners:3-dots-scale" /></strong>
-            </div>
+            {disableLabel === false && (
+              <div className="state-title">
+                  <span>{title}</span>
+                  <strong>{label} <Icon icon="svg-spinners:3-dots-scale" /></strong>
+              </div>
+            )}
+            {children}
         </div>
     </div>
   );
