@@ -118,7 +118,7 @@ namespace Keepix.SmartNodePlugin.Services
         {
             try {
                 var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
-                string pattern = @"\(\s[\d]+\.[\d]+ %\) \| queue";
+                string pattern = @"[\d]+\.[\d]+ %\) \| queue";
                 MatchCollection matches = Regex.Matches(result, pattern);
                 if (matches.Count > 0)
                 {
@@ -135,7 +135,7 @@ namespace Keepix.SmartNodePlugin.Services
         {
             try {
                 var result = Shell.ExecuteCommand("docker container logs keepix_eth2");
-                string pattern = @"\(\s[\d]+\.[\d]+%\)";
+                string pattern = @"[\d]+\.[\d]+%\)";
                 MatchCollection matches = Regex.Matches(result, pattern);
                 if (matches.Count > 0)
                 {
