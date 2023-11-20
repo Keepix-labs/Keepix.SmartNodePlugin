@@ -137,7 +137,11 @@ The Front-end application will be loaded by the Keepix with an iframe at the fol
 
 Here the plugin Name is 'Keepix.SmartNodePlugin' but in function of your plugin name change this line in the package.json:  
   
-`PUBLIC_URL=/plugins/Keepix.SmartNodePlugin/view react-app-rewired build`  
+`PUBLIC_URL=/plugins/Keepix.SmartNodePlugin/view react-app-rewired build` 
+
+And in the src-front/constants.ts:  
+  
+`export const PLUGIN_NAME = 'Keepix.SmartNodePlugin';`  
 
 For developping locally your plugin on the config-overrides.js you can see a  
 express.js server simulation the routes of the real keepix server  
