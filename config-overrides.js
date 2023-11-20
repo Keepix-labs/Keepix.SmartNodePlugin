@@ -98,5 +98,5 @@ module.exports = {
         paths.appIndexJs = path.resolve(__dirname, 'src-front/index.tsx');
         paths.appSrc = path.resolve(__dirname, 'src-front');
         return paths;
-    },
+    }
 }

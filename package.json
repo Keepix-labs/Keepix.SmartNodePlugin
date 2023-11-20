@@ -26,6 +26,7 @@
     },
     "scripts": {
         "start": "npm run p-build-debug && react-app-rewired start",
+        "start-without-front": "node -e \"const { paths } = require('./config-overrides.js'); paths({});\" start.js",
         "increase-build-version": "increase-build-package-public-directory && increase-build-package-public-directory public",
         "build": "npm run p-build-all && npm run increase-build-version && PUBLIC_URL=/plugins/Keepix.SmartNodePlugin/view react-app-rewired build && cp -R ./dist ./build",
         "publish": "cd build && npm publish",
