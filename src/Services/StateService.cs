@@ -124,6 +124,7 @@ namespace Keepix.SmartNodePlugin.Services
                 {
                     return matches[matches.Count - 1].Value.Replace("%", "").Replace("queue", "").Replace("|", "").Replace(")", "").Replace("(", "").Trim();
                 }
+                Console.WriteLine("No maches eth1");
             } catch (Exception error) {
                 Console.WriteLine(error);
             }
@@ -140,6 +141,7 @@ namespace Keepix.SmartNodePlugin.Services
                 {
                     return matches[matches.Count - 1].Value.Replace("%", "").Replace(")", "").Replace("(", "").Trim();
                 }
+                Console.WriteLine("No maches eth2");
             } catch (Exception error) {
                 Console.WriteLine(error);
             }
