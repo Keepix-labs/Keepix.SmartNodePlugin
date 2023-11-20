@@ -51,18 +51,24 @@ Warn attention to set the path of the plugin correctly on the package.json at th
 ### Plugin Dotnet
 
 The plugin using the Keepix.PluginSystem library who override the STDout and STDerr and format an result like this:  
-`{ "result": "{ "x": "x" }", "stdOut": "logs" }`  
+`{ "result": "{ \"x\": \"x\" }", "stdOut": "logs" }`  
 
 The plugin using the [KeepixPluginFn("function-name")] annotation for exposing functions.
 
 Example of input for running manually one function:
 `./Plugin.SmartNodePlugin '{ "key": "install", "data1": "a", "data2": "b" }'` 
 
-Example of query for running from the front-end one function on the debug server (Runned at the npm run start moment):  
+Example of queries for running from the front-end one function on the debug server (Runned at the npm run start moment):  
   
 ```bash
 GET http://localhost:2000/plugins/Keepix.SmartNodePlugin/status  
-Result: { ... }  
+Result: { "result": "{ \"status\": \"XXX\" }", "stdOut": "..." }
+```  
+
+```bash
+POST http://localhost:2000/plugins/Keepix.SmartNodePlugin/install?async=false  
+Body: { "key": "install", "data1": "a", "data2": "b" }  
+Result: { "result": true, "stdOut": "..." }
 ```  
   
 ```bash
@@ -87,10 +93,39 @@ Result: ["install", "uninstall", ...]
 
 ### Plugin LifeCycle Required Exposed Functions
 
-Install function called at the installation time  
-`[KeepixPluginFn("install")]`  
-Uninstall function called at the uninstallation time  
-`[KeepixPluginFn("uninstall")]`  
+Install (return boolean of success) function called at the installation time  
+```bash
+                                 [KeepixPluginFn("install")]
+public static async Task<bool> OnInstall(InstallInput input)
+{
+    ...
+    return true;
+}
+```  
+
+Uninstall (return boolean of success) function called at the uninstallation time  
+```bash
+               [KeepixPluginFn("uninstall")]
+public static async Task<bool> OnUninstall()
+{
+    ...
+    return true;
+}
+```  
+  
+Example of exposed function who return data:  
+```bash
+               [KeepixPluginFn("x")]
+public static async Task<string> OnX()
+{
+    ...
+    return JsonConvert.SerializeObject(new {
+        IsSynced = StateService.IsNodeSynced(),
+        executionSyncProgress,
+        consensusSyncProgress
+    });
+}
+```  
 
 ### Plugin Front-end
 
