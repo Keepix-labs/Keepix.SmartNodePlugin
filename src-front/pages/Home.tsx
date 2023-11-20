@@ -26,7 +26,9 @@ export default function HomePage() {
 
   const syncProgressQuery = useQuery({
     queryKey: ["getPluginSyncProgress"],
-    queryFn: getPluginSyncProgress
+    queryFn: getPluginSyncProgress,
+    refetchInterval: 5000,
+    enabled: statusQuery.data?.NodeState === 'NODE_RUNNING'
   });
 
   return (
