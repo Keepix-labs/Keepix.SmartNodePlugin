@@ -405,3 +405,4 @@ data/
 bin/
 build/
 .DS_Store
+.env
