@@ -24,7 +24,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             stateManager = PluginStateManager.GetStateManager();
-            if (stateManager.Step.Equals("INSTALLED")) {
+            if (stateManager.Installed) {
                 Console.WriteLine("The smart-node is already Installed.");
                 return false;
             }
@@ -114,7 +114,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             // SETUP SMART NODE END //
-            stateManager.DB.Store("STEP", "INSTALLED");
+            stateManager.DB.Store("INSTALLED", true);
             return true;
         }
 
@@ -236,7 +236,7 @@ namespace Keepix.SmartNodePlugin.Controllers
                 return false;
             }
             stateManager = PluginStateManager.GetStateManager();
-            if (!stateManager.Step.Equals("INSTALLED")) {
+            if (!stateManager.Installed) {
                 Console.WriteLine("The smart-node is not installed!");
                 return true;
             }

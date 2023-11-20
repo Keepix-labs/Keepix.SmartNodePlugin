@@ -55,12 +55,21 @@ export default function HomePage() {
           setup wallet
       </>)}
 
-      {statusQuery?.data && !syncProgressQuery?.data
+      {statusQuery?.data
+        && !syncProgressQuery?.data
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
         && walletQuery.data?.Wallet !== undefined && (
         <BigLoader title="" full={true}></BigLoader>
       )}
+      {statusQuery?.data
+        && syncProgressQuery?.data
+        && syncProgressQuery?.data?.IsSynced === false
+        && statusQuery.data?.NodeState === 'NODE_RUNNING'
+        && walletQuery.data?.Wallet !== undefined && (
+        <BigLoader title="Synchonization In Progress" label={`ExecutionSyncProgress: ${syncProgressQuery?.data.executionSyncProgress}% - ConsensusSyncProgress: ${syncProgressQuery?.data.consensusSyncProgress}%`} full={true}></BigLoader>
+      )}
       {statusQuery?.data && syncProgressQuery?.data
+        && syncProgressQuery?.data?.IsSynced === true
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
         && walletQuery.data?.Wallet !== undefined && (<>
         <div className="home-row-3" >

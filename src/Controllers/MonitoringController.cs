@@ -16,6 +16,14 @@ namespace Keepix.SmartNodePlugin.Controllers
     internal class MonitoringController
     {
         private static PluginStateManager stateManager;
+
+        [KeepixPluginFn("installed")]
+        public static async Task<bool> OnInstalled()
+        {
+            stateManager = PluginStateManager.GetStateManager();
+            return stateManager.Installed;
+        }
+
         [KeepixPluginFn("status")]
         public static async Task<string> OnStatus(InstallInput input)
         {

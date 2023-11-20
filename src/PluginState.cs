@@ -24,7 +24,7 @@ namespace Keepix.SmartNodePlugin
     internal class PluginStateManager
     {
         public PluginStateEnum State { get; set; }
-        public string Step { get; set; }
+        public bool Installed { get; set; }
         public JsonObjectStore DB { get; set; }
 
         public static string GetStoragePath()
@@ -57,10 +57,10 @@ namespace Keepix.SmartNodePlugin
             
             // for know the global steps.
             try {
-                stateManager.Step = stateManager.DB.Retrieve<string>("STEP");
+                stateManager.Installed = stateManager.DB.Retrieve<bool>("INSTALLED");
             } 
             catch (KeyNotFoundException) {
-                stateManager.Step = "";
+                stateManager.Installed = false;
             }
             return stateManager;
         }
