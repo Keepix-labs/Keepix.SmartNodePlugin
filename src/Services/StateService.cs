@@ -117,12 +117,12 @@ namespace Keepix.SmartNodePlugin.Services
         public static string GetPercentSyncEth1()
         {
             try {
-                var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
-                string pattern = @"[\d]+\.[\d]+ %\) \| queue";
+                var result = Shell.ExecuteCommand("docker container logs keepix_watchtower");
+                string pattern = @"Eth 1\.0 node syncing\: [\d]+\.[\d]+%";
                 MatchCollection matches = Regex.Matches(result, pattern);
                 if (matches.Count > 0)
                 {
-                    return matches[matches.Count - 1].Value.Replace("%", "").Replace("queue", "").Replace("|", "").Replace(")", "").Replace("(", "").Trim();
+                    return matches[matches.Count - 1].Value.Replace("%", "").Replace("Eth 1.0 node syncing:", "").Replace(")", "").Replace("(", "").Trim();
                 }
                 Console.WriteLine("No maches eth1");
             } catch (Exception error) {
