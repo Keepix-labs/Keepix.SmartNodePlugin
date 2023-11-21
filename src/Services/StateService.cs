@@ -117,7 +117,7 @@ namespace Keepix.SmartNodePlugin.Services
         public static string GetPercentSyncEth1()
         {
             try {
-                var result = Shell.ExecuteCommand("docker container logs keepix_watchtower");
+                var result = Shell.ExecuteCommand("docker container logs keepix_node");
                 string pattern = @"1\.0 node syncing\: [\d]+\.[\d]+%";
                 Console.WriteLine(result);
                 MatchCollection matches = Regex.Matches(result, pattern);
