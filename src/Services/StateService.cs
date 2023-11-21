@@ -118,7 +118,7 @@ namespace Keepix.SmartNodePlugin.Services
         {
             try {
                 var result = Shell.ExecuteCommand("docker container logs keepix_node");
-                string pattern = @"1\.0 node syncing\: [\d]+\.[\d]+%";
+                string pattern = @"[\d]+\.[\d]+%";
                 Console.WriteLine(result);
                 MatchCollection matches = Regex.Matches(result, pattern);
                 if (matches.Count > 0)
