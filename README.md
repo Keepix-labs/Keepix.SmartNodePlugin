@@ -175,7 +175,7 @@ Ps: when you are ready for publishing you Plugin go to the Publish directory sec
 Example of build directory for the plugin Keepix.SmartNodePlugin  
   
 ```bash
-/buid  
+/build  
   /dist  
     /linux-arm64  
       Keepix.SmartNodePlugin  
