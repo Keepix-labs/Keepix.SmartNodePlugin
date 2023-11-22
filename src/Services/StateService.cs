@@ -120,7 +120,6 @@ namespace Keepix.SmartNodePlugin.Services
                 var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
                 string pattern = @"[\d]+\.[\d]+%";
                 MatchCollection matches = Regex.Matches(result, pattern);
-                Console.WriteLine(result);
                 if (matches.Count > 0)
                 {
                     return matches[matches.Count - 1].Value.Replace("%", "").Replace("1.0 node syncing:", "").Replace(")", "").Replace("(", "").Trim();
