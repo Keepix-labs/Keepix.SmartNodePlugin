@@ -99,9 +99,9 @@ namespace Keepix.SmartNodePlugin.Services
                 try {
                     //Downloaded   374,457 / 387,633 ( 96.60 %) |
                     var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
-                    string executionDownloadProgressPattern = @"\( (\d+\.\d+) %\) |";
-                    var executionDownloadProgressMatch = Regex.Match(data, executionDownloadProgressPattern);
-                    executionSyncProgress = (executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00");
+                    string executionDownloadProgressPattern = @"\( \d+\.\d+ %\) |";
+                    MatchCollection matches = Regex.Matches(result, executionDownloadProgressPattern);
+                    executionSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "0.00");
                     if (executionSyncProgress == "100") {
                         // Since I'm taking the information from the logs, I'm restoring the state that rocketpool should have at that moment, i.e. 99.99%.
                         executionSyncProgress = "99.99";
