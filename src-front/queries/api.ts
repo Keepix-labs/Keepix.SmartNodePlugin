@@ -19,7 +19,7 @@ export const getPluginWallet = async () =>
 
 export const getPluginSyncProgress = async () => 
   request<any>({
-    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/sync-2`,
+    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/sync-state`,
     method: 'GET',
     name: "getPluginSyncProgress",
     parser: (data: any) => { return JSON.parse(data.result); } 

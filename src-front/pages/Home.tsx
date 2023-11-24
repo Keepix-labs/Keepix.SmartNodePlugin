@@ -70,6 +70,7 @@ export default function HomePage() {
         && walletQuery.data?.Wallet !== undefined && (
         <BigLoader title="" label="Retrieving synchronization information" full={true}></BigLoader>
       )}
+
       {statusQuery?.data
         && syncProgressQuery?.data
         && syncProgressQuery?.data?.IsSynced === false
@@ -87,6 +88,7 @@ export default function HomePage() {
             >Stop</Btn>
         </BigLoader>
       )}
+      
       {statusQuery?.data && syncProgressQuery?.data
         && syncProgressQuery?.data?.IsSynced === true
         && statusQuery.data?.NodeState === 'NODE_RUNNING'

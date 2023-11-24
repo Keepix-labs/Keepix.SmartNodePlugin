@@ -58,7 +58,7 @@ namespace Keepix.SmartNodePlugin
             // for know the global steps.
             try {
                 stateManager.Installed = stateManager.DB.Retrieve<bool>("INSTALLED");
-            } 
+            }
             catch (KeyNotFoundException) {
                 stateManager.Installed = false;
             }

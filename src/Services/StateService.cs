@@ -84,8 +84,8 @@ namespace Keepix.SmartNodePlugin.Services
             var executionSyncProgressMatch = Regex.Match(data, executionSyncProgressPattern);
             var consensusSyncProgressMatch = Regex.Match(data, consensusSyncProgressPattern);
 
-            string executionSyncProgress = executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00%";
-            string consensusSyncProgress = consensusSyncProgressMatch.Success ? consensusSyncProgressMatch.Groups[1].Value : "0.00%";
+            string executionSyncProgress = executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00";
+            string consensusSyncProgress = consensusSyncProgressMatch.Success ? consensusSyncProgressMatch.Groups[1].Value : "0.00";
 
             return (executionSyncProgress, consensusSyncProgress);
         }
@@ -94,7 +94,7 @@ namespace Keepix.SmartNodePlugin.Services
         {
             var isSync = IsNodeSynced();
             if (isSync) {
-                return ("100%", "100%");
+                return ("100", "100");
             }
             var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node sync");
             return ExtractPercent(result);
