@@ -95,6 +95,16 @@ namespace Keepix.SmartNodePlugin.Services
             string executionSyncProgress = executionSyncProgressSynced ? "100" : (executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00");
             string consensusSyncProgress = consensusSyncProgressSynced ? "100" : (consensusSyncProgressMatch.Success ? consensusSyncProgressMatch.Groups[1].Value : "0.00");
 
+            if (executionSyncProgress == "0.00" && consensusSyncProgress == "100") {
+                try {
+                    //Downloaded   374,457 / 387,633 ( 96.60 %) |
+                    var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
+                    string executionDownloadProgressPattern = @"\( (\d+\.\d+) %\) |";
+                    var executionDownloadProgressMatch = Regex.Match(data, executionDownloadProgressPattern);
+                    executionSyncProgress = (executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00");
+                } catch (Exception) {}
+            }
+
             return (executionSyncProgress, consensusSyncProgress);
         }
 
