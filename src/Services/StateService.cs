@@ -109,6 +109,21 @@ namespace Keepix.SmartNodePlugin.Services
                 } catch (Exception) {}
             }
 
+            //backfill: 00h45m (48.61%)
+            if (executionSyncProgress == "99.99" && consensusSyncProgress == "100") {
+                try {
+                    //Downloaded   374,457 / 387,633 ( 96.60 %) |
+                    var result = Shell.ExecuteCommand("docker container logs keepix_eth2");
+                    string concensusBackFillProgressPattern = @"m \(\d+\.\d+%\)";
+                    MatchCollection matches = Regex.Matches(result, concensusBackFillProgressPattern);
+                    consensusSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("m", "").Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "100.00");
+                    if (((float)Convert.ToDouble(consensusSyncProgress)) > 90) {
+                        // Since I'm taking the information from the logs, I'm restoring the state that rocketpool should have at that moment, i.e. 100%.
+                        consensusSyncProgress = "100";
+                    }
+                } catch (Exception) {}
+            }
+
             return (executionSyncProgress, consensusSyncProgress);
         }
 
