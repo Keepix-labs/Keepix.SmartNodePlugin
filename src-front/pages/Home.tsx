@@ -11,6 +11,15 @@ import BigLoader from "../components/BigLoader/BigLoader";
 import BannerAlert from "../components/BannerAlert/BannerAlert";
 import BigLogo from "../components/BigLogo/BigLogo";
 import { Icon } from "@iconify-icon/react";
+import FAQ from "../components/Faq/Faq";
+
+
+const faqSyncProgress: any[] = [
+  {
+    title: "Is the progress of the Consensus node blocked at 0% or blocked at 99.99%?",
+    desc: "Please wait several hours to be sure of the blockage, once the problem has been confirmed please select re-sync. This will restart synchronization from zero. If this happens again, please repeat the same procedure. Ethereum clients have several synchronization problems that are resolved after several re-syncs.",
+  }
+];
 
 export default function HomePage() {
   const [loading, setLoading] = useState(false);
@@ -68,7 +77,12 @@ export default function HomePage() {
         && !syncProgressQuery?.data
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
         && walletQuery.data?.Wallet !== undefined && (
-        <BigLoader title="" label="Retrieving synchronization information" full={true}></BigLoader>
+        <BigLoader title="Estimation: 1 to 10 minutes." label="Retrieving synchronization information" full={true}>
+          <Btn
+                status="danger"
+                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/stop`) }}
+              >Stop</Btn>
+        </BigLoader>
       )}
 
       {statusQuery?.data
@@ -76,16 +90,23 @@ export default function HomePage() {
         && syncProgressQuery?.data?.IsSynced === false
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
         && walletQuery.data?.Wallet !== undefined && (
-        <BigLoader title="Synchonization In Progress" disableLabel={true} full={true}>
+        <BigLoader title="Estimation: 1 hour to several days." disableLabel={true} full={true}>
           <div className="state-title">
                 <strong>{`ExecutionSyncProgress: ${syncProgressQuery?.data.executionSyncProgress}%`}</strong>
                 <strong>{`ConsensusSyncProgress: ${syncProgressQuery?.data.consensusSyncProgress}%`}</strong>
                 <strong><Icon icon="svg-spinners:3-dots-scale" /></strong>
           </div>
-          <Btn
-              status="danger"
-              onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/stop`) }}
-            >Stop</Btn>
+          <FAQ questions={faqSyncProgress}></FAQ>
+          <div className="home-row-2" >
+            <Btn
+                status="danger"
+                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/stop`) }}
+              >Stop</Btn>
+            <Btn
+                status="warning"
+                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/re-sync`) }}
+              >Re-sync</Btn>
+          </div>
         </BigLoader>
       )}
       

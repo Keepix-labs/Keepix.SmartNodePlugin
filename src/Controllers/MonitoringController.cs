@@ -43,7 +43,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             stateManager = PluginStateManager.GetStateManager();
             var (executionSyncProgress, consensusSyncProgress) = StateService.PercentSync();
             return JsonConvert.SerializeObject(new {
-                IsSynced = StateService.IsNodeSynced(),
+                IsSynced = executionSyncProgress == "100" && consensusSyncProgress == "100",
                 executionSyncProgress,
                 consensusSyncProgress
             });

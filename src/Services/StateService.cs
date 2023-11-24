@@ -78,35 +78,36 @@ namespace Keepix.SmartNodePlugin.Services
 
     public static (string executionSyncProgress, string consensusSyncProgress) ExtractPercent(string data)
         {
+            var executionSyncProgressSynced = false;
+            var consensusSyncProgressSynced = false;
+            if (data.Contains("Your primary execution client is fully synced.")) {
+                executionSyncProgressSynced = true;
+            }
+            if (data.Contains("Your primary consensus client is fully synced.")) {
+                consensusSyncProgressSynced = true;
+            }
             string executionSyncProgressPattern = @"primary execution client is still syncing \((\d+\.\d+)%\)";
             string consensusSyncProgressPattern = @"primary consensus client is still syncing \((\d+\.\d+)%\)";
 
             var executionSyncProgressMatch = Regex.Match(data, executionSyncProgressPattern);
             var consensusSyncProgressMatch = Regex.Match(data, consensusSyncProgressPattern);
 
-            string executionSyncProgress = executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00";
-            string consensusSyncProgress = consensusSyncProgressMatch.Success ? consensusSyncProgressMatch.Groups[1].Value : "0.00";
+            string executionSyncProgress = executionSyncProgressSynced ? "100" : (executionSyncProgressMatch.Success ? executionSyncProgressMatch.Groups[1].Value : "0.00");
+            string consensusSyncProgress = consensusSyncProgressSynced ? "100" : (consensusSyncProgressMatch.Success ? consensusSyncProgressMatch.Groups[1].Value : "0.00");
 
             return (executionSyncProgress, consensusSyncProgress);
         }
 
         public static (string executionSyncProgress, string consensusSyncProgress) PercentSync()
         {
-            var isSync = IsNodeSynced();
-            if (isSync) {
-                return ("100", "100");
-            }
             var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node sync");
             return ExtractPercent(result);
         }
 
         public static bool IsNodeSynced()
         {
-            var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node sync");
-            if (result.Contains("Your primary execution client is fully synced.") && result.Contains("Your primary consensus client is fully synced.")) {
-                return true;
-            }
-            return false;
+            var (executionSyncProgress, consensusSyncProgress) = PercentSync();
+            return executionSyncProgress == "100" && consensusSyncProgress == "100";
         }
 
         public static (string executionSyncProgress, string consensusSyncProgress) GetPercentSync2()

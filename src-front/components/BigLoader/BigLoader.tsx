@@ -21,10 +21,10 @@ export default function BigLoader({
             <div className="state-logo">
             <Logo text={false} />
             </div>
-            {disableLabel === false && (
+            {(
               <div className="state-title">
                   <span>{title}</span>
-                  <strong>{label} <Icon icon="svg-spinners:3-dots-scale" /></strong>
+                  {disableLabel === true ? '' : <strong>{label} <Icon icon="svg-spinners:3-dots-scale" /></strong>}
               </div>
             )}
             {children}
