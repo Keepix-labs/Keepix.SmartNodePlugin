@@ -220,6 +220,33 @@ namespace Keepix.SmartNodePlugin.Controllers
             return true;
         }
 
+        [KeepixPluginFn("resync-eth2")]
+        public static async Task<bool> OnResyncEth2()
+        {
+            var isDockerRunning = SetupService.isDockerRunning();
+            if (!isDockerRunning) {
+                Console.WriteLine("Docker is not live on your device, please start it");
+                return false;
+            }
+            try
+            {
+                stateManager = PluginStateManager.GetStateManager();
+                var isRunning = SetupService.IsNodeRunning();
+                string error = string.Empty;
+                if (isRunning) {
+                    error = SetupService.ReSyncEth2Node();
+                    if (!string.IsNullOrEmpty(error)) {
+                        Console.WriteLine("An error occured while trying to resync-eth2 your node, check manually or contact the Keepix team " + error);
+                    }
+                }
+            }
+            catch (Exception) 
+            {
+                return false;   
+            }
+            return true;
+        }
+
 
         [KeepixPluginFn("stop")]
         public static async Task<bool> OnStop()

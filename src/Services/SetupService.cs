@@ -323,6 +323,20 @@ namespace Keepix.SmartNodePlugin.Services
             return result;
         }
 
+        public static string ReSyncEth2Node()
+        {
+            ShellCondition conditions = new ShellCondition()
+            {
+                content = "Are you SURE you want to delete and resync your main ETH2 client from scratch? This cannot be undone!",
+                answers = new string[] {"y", ""}
+            };
+            var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root service resync-eth2", new List<ShellCondition>() { conditions } );
+            if (result.Contains("Done!")) {
+                return string.Empty;
+            }
+            return result;
+        }
+
         public static string RegisterNode()
         {
             string timezone = OS.GetTimeZone();

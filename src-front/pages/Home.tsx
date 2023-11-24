@@ -104,7 +104,7 @@ export default function HomePage() {
               >Stop</Btn>
             <Btn
                 status="warning"
-                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/re-sync`) }}
+                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/resync-eth1`) }}
               >Re-sync</Btn>
           </div>
         </BigLoader>
