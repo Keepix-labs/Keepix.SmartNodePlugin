@@ -1,3 +1,7 @@
+using System.Net;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -27,5 +31,13 @@ namespace Keepix.SmartNodePlugin.Utils
             try { timezone = Shell.ExecuteCommand("cat /etc/timezone"); } catch (Exception) { return string.Empty; }
             return timezone.Trim();
         }
+
+        public static bool IsIPv4(IPAddress ipa) => ipa.AddressFamily == AddressFamily.InterNetwork;
+
+        public static IPAddress GetMainIPv4() => NetworkInterface.GetAllNetworkInterfaces()
+            .Select((ni)=>ni.GetIPProperties())
+            .Where((ip)=> ip.GatewayAddresses.Where((ga) => IsIPv4(ga.Address)).Count() > 0)
+            .FirstOrDefault()?.UnicastAddresses?
+            .Where((ua) => IsIPv4(ua.Address))?.FirstOrDefault()?.Address;
     }
 }

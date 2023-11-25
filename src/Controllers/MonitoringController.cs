@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Keepix.PluginSystem;
 using Keepix.SmartNodePlugin.DTO.Input;
 using Keepix.SmartNodePlugin.Services;
+using Keepix.SmartNodePlugin.Utils;
 using Newtonsoft.Json;
 
 namespace Keepix.SmartNodePlugin.Controllers
@@ -74,6 +75,12 @@ namespace Keepix.SmartNodePlugin.Controllers
         public static async Task<string> getStoragePath()
         {
             return PluginStateManager.GetStoragePath();
+        }
+
+        [KeepixPluginFn("ipv4")]
+        public static async Task<string> getIpv4()
+        {
+            return OS.GetMainIPv4().ToString();
         }
     }
 }
