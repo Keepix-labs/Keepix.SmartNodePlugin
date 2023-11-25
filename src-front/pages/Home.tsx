@@ -12,12 +12,25 @@ import BannerAlert from "../components/BannerAlert/BannerAlert";
 import BigLogo from "../components/BigLogo/BigLogo";
 import { Icon } from "@iconify-icon/react";
 import FAQ from "../components/Faq/Faq";
+import Progress from "../components/Progress/Progress";
 
 
 const faqSyncProgress: any[] = [
   {
-    title: "Is the progress of the Consensus node blocked at 0% or blocked at 99.99%?",
+    title: "Does the window have to stay open?",
+    desc: "No, it's not necessary, but if you're on your own computer, please leave it running."
+  },
+  {
+    title: "Why does the Execution sync remain at zero percent as the Consensus advances?",
+    desc: "The Consensus will be 100% before the Execution node. This is a normal situation, so don't hesitate to wait several hours before doing anything."
+  },
+  {
+    title: "Is the progress of the Consensus node blocked at 0%?",
     desc: "Please wait several hours to be sure of the blockage, once the problem has been confirmed please select re-sync. This will restart synchronization from zero. If this happens again, please repeat the same procedure. Ethereum clients have several synchronization problems that are resolved after several re-syncs.",
+  },
+  {
+    title: "Is the progress of the Execution node blocked at 99.99%?",
+    desc: "At the end of the Execution node's synchronization, it waits for the concensus to send it all the information. The concensus may be delayed, so it needs to check the data again, which may take some time, so please be patient at this stage. If nothing happens after 24 hours, please uninstall and reinstall the plugin."
   }
 ];
 
@@ -92,9 +105,11 @@ export default function HomePage() {
         && walletQuery.data?.Wallet !== undefined && (
         <BigLoader title="Estimation: 1 hour to several days." disableLabel={true} full={true}>
           <div className="state-title">
-                <strong>{`ExecutionSyncProgress: ${syncProgressQuery?.data.executionSyncProgress}%`}</strong>
-                <strong>{`ConsensusSyncProgress: ${syncProgressQuery?.data.consensusSyncProgress}%`}</strong>
-                <strong><Icon icon="svg-spinners:3-dots-scale" /></strong>
+                <strong>{`Execution Sync Progress:`}</strong>
+                <Progress percent={Number(syncProgressQuery?.data.executionSyncProgress)}></Progress>
+                <strong>{`Consensus Sync Progress:`}</strong>
+                <Progress percent={Number(syncProgressQuery?.data.consensusSyncProgress)}></Progress>
+                {/* <strong><Icon icon="svg-spinners:3-dots-scale" /></strong> */}
           </div>
           <FAQ questions={faqSyncProgress}></FAQ>
           <div className="home-row-2" >
@@ -103,9 +118,39 @@ export default function HomePage() {
                 onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/stop`) }}
               >Stop</Btn>
             <Btn
+                status="danger"
+                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/restart`) }}
+              >Restart</Btn>
+          </div>
+          <div className="home-row-2" >
+              <Btn
                 status="warning"
-                onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/resync-eth1`) }}
-              >Re-sync</Btn>
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const resultEth2 = await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/resync-eth1`);
+
+                    console.log('NICEE', resultEth2);
+                  } catch (e) {
+                    console.log(e);
+                  }
+                  setLoading(false);
+                }}
+              >Re-sync Execution</Btn>
+              <Btn
+                status="warning"
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const resultEth2 = await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/resync-eth2`);
+
+                    console.log('NICEE', resultEth2);
+                  } catch (e) {
+                    console.log(e);
+                  }
+                  setLoading(false);
+                }}
+              >Re-sync Consensus</Btn>
           </div>
         </BigLoader>
       )}

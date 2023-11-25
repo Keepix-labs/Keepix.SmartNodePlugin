@@ -76,8 +76,10 @@ namespace Keepix.SmartNodePlugin.Services
             return match.Success ? match.Value : string.Empty;
         }
 
-    public static (string executionSyncProgress, string consensusSyncProgress) ExtractPercent(string data)
+    public static (string executionSyncProgress, string consensusSyncProgress, string executionSyncProgressStepDescription, string consensusSyncProgressStepDescription) ExtractPercent(string data)
         {
+            string executionSyncProgressStepDescription = "";
+            string consensusSyncProgressStepDescription = "";
             var executionSyncProgressSynced = false;
             var consensusSyncProgressSynced = false;
             if (data.Contains("Your primary execution client is fully synced.")) {
@@ -128,10 +130,10 @@ namespace Keepix.SmartNodePlugin.Services
                 } catch (Exception) {}
             }
 
-            return (executionSyncProgress, consensusSyncProgress);
+            return (executionSyncProgress, consensusSyncProgress, executionSyncProgressStepDescription, consensusSyncProgressStepDescription);
         }
 
-        public static (string executionSyncProgress, string consensusSyncProgress) PercentSync()
+        public static (string executionSyncProgress, string consensusSyncProgress, string executionSyncProgressStepDescription, string consensusSyncProgressStepDescription) PercentSync()
         {
             var result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node sync");
             return ExtractPercent(result);
@@ -139,47 +141,8 @@ namespace Keepix.SmartNodePlugin.Services
 
         public static bool IsNodeSynced()
         {
-            var (executionSyncProgress, consensusSyncProgress) = PercentSync();
+            var (executionSyncProgress, consensusSyncProgress, ed, cd) = PercentSync();
             return executionSyncProgress == "100" && consensusSyncProgress == "100";
-        }
-
-        public static (string executionSyncProgress, string consensusSyncProgress) GetPercentSync2()
-        {
-            return (GetPercentSyncEth1(), GetPercentSyncEth2());
-        }
-
-        public static string GetPercentSyncEth1()
-        {
-            try {
-                var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
-                string pattern = @"[\d]+\.[\d]+%";
-                MatchCollection matches = Regex.Matches(result, pattern);
-                if (matches.Count > 0)
-                {
-                    return matches[matches.Count - 1].Value.Replace("%", "").Replace("1.0 node syncing:", "").Replace(")", "").Replace("(", "").Trim();
-                }
-                Console.WriteLine("No maches eth1");
-            } catch (Exception error) {
-                Console.WriteLine(error);
-            }
-            return "0";
-        }
-
-        public static string GetPercentSyncEth2()
-        {
-            try {
-                var result = Shell.ExecuteCommand("docker container logs keepix_eth2");
-                string pattern = @"[\d]+\.[\d]+%\)";
-                MatchCollection matches = Regex.Matches(result, pattern);
-                if (matches.Count > 0)
-                {
-                    return matches[matches.Count - 1].Value.Replace("%", "").Replace(")", "").Replace("(", "").Trim();
-                }
-                Console.WriteLine("No maches eth2");
-            } catch (Exception error) {
-                Console.WriteLine(error);
-            }
-            return "0";
         }
 
         public static string getLogs(bool eth1)

@@ -41,23 +41,13 @@ namespace Keepix.SmartNodePlugin.Controllers
         public static async Task<string> OnSyncState()
         {
             stateManager = PluginStateManager.GetStateManager();
-            var (executionSyncProgress, consensusSyncProgress) = StateService.PercentSync();
+            var (executionSyncProgress, consensusSyncProgress, executionSyncProgressStepDescription, consensusSyncProgressStepDescription) = StateService.PercentSync();
             return JsonConvert.SerializeObject(new {
                 IsSynced = executionSyncProgress == "100" && consensusSyncProgress == "100",
                 executionSyncProgress,
-                consensusSyncProgress
-            });
-        }
-
-        [KeepixPluginFn("sync-2")]
-        public static async Task<string> OnSync2()
-        {
-            stateManager = PluginStateManager.GetStateManager();
-            var (executionSyncProgress, consensusSyncProgress) = StateService.GetPercentSync2();
-            return JsonConvert.SerializeObject(new {
-                IsSynced = executionSyncProgress == "100" && consensusSyncProgress == "100",
-                executionSyncProgress,
-                consensusSyncProgress
+                consensusSyncProgress,
+                executionSyncProgressStepDescription,
+                consensusSyncProgressStepDescription
             });
         }
 
