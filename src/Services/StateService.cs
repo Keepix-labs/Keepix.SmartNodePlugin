@@ -102,6 +102,15 @@ namespace Keepix.SmartNodePlugin.Services
                     //Downloaded   374,457 / 387,633 ( 96.60 %) |
                     var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
                     if (result.Contains("Downloaded") || result.Contains("Old Headers") || result.Contains("Old Receipts")) {
+                        if (result.Contains("Downloaded")) {
+                            executionSyncProgressStepDescription = "Downloading of the Blocks";
+                        }
+                        if (result.Contains("Old Headers")) {
+                            executionSyncProgressStepDescription = "Downloading of the Old Headers";
+                        }
+                        if (result.Contains("Old Receipts")) {
+                            executionSyncProgressStepDescription = "Downloading of the Old Receipts";
+                        }
                         string executionDownloadProgressPattern = @"\( \d+\.\d+ %\) \|";
                         MatchCollection matches = Regex.Matches(result, executionDownloadProgressPattern);
                         executionSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "100");
@@ -119,6 +128,7 @@ namespace Keepix.SmartNodePlugin.Services
                     //Downloaded   374,457 / 387,633 ( 96.60 %) |
                     var result = Shell.ExecuteCommand("docker container logs keepix_eth2");
                     if (result.Contains("backfill:")) {
+                        consensusSyncProgressStepDescription = "Checking of the attestations.";
                         string concensusBackFillProgressPattern = @"m \(\d+\.\d+%\)";
                         MatchCollection matches = Regex.Matches(result, concensusBackFillProgressPattern);
                         consensusSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("m", "").Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "100.00");
