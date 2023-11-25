@@ -343,7 +343,11 @@ namespace Keepix.SmartNodePlugin.Services
             if (string.IsNullOrEmpty(timezone)) {
                 return "Can't find the timezone of your machine, please set it manually or contact support.";
             }
-
+            string nodeStatus = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
+            
+            if (nodeStatus.Contains("The node is registered")) { // already Registered
+                return string.Empty;
+            }
             var cli = $"~/bin/rocketpool --allow-root node register --timezone {timezone}";
             var result = Shell.ExecuteCommand(cli, new List<ShellCondition>() {
                 new ShellCondition()
