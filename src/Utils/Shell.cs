@@ -46,7 +46,7 @@ namespace Keepix.SmartNodePlugin.Utils
                          Thread.Sleep(1500); // once we met a condition we let time to terminal for processing the next conditions
                     }
                 }
-                output += line;
+                output += string.IsNullOrEmpty(output) ? line : "\n" + line;
 
                 if (waitForExit != -1) {
                     var now = DateTime.UtcNow;
