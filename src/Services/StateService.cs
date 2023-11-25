@@ -201,7 +201,7 @@ namespace Keepix.SmartNodePlugin.Services
             string nodeCreditBalance = "0";
             Match matchNodeCreditBalance = Regex.Match(data, @"The node has (\d+\.\d+) ETH in its credit balance");
             if (matchNodeCreditBalance.Success) {
-                nodeCreditBalance = matchOfWalletBalances.Groups[1].Value;
+                nodeCreditBalance = matchNodeCreditBalance.Groups[1].Value;
             }
             Console.WriteLine("Node Credit Balance: " + nodeCreditBalance + " ETH");
             
