@@ -17,5 +17,7 @@ namespace Keepix.SmartNodePlugin
         public string nodeRPLStakedBondedETHPercentage { get;set; }
         public string nodeMinimumRPLStakeNeeded { get;set; }
         public string nodeMaximumRPLStakePossible { get;set; }
+        public string rpcUrl { get;set; }
+        public string ipv4 { get;set; }
     }
 }

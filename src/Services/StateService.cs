@@ -249,6 +249,9 @@ namespace Keepix.SmartNodePlugin.Services
             }
             Console.WriteLine("Node Most maximal RPL stake to claim RPL rewards: " + nodeMaximumRPLStakePossible + " RPL (150% of bonded ETH)");
 
+            string localIPv4 = OS.GetMainIPv4().ToString();
+            string rpcUrl = "http://" + localIPv4 + ":8545";
+
             return new NodeInformation() {
                 ethWalletBalance = ethWalletBalance,
                 rplWalletBalance = rplWalletBalance,
@@ -259,7 +262,9 @@ namespace Keepix.SmartNodePlugin.Services
                 nodeRPLStakedBorrowedETHPercentage = nodeRPLStakedBorrowedETHPercentage,
                 nodeRPLStakedBondedETHPercentage = nodeRPLStakedBondedETHPercentage,
                 nodeMinimumRPLStakeNeeded = nodeMinimumRPLStakeNeeded,
-                nodeMaximumRPLStakePossible = nodeMaximumRPLStakePossible
+                nodeMaximumRPLStakePossible = nodeMaximumRPLStakePossible,
+                rpcUrl = rpcUrl,
+                ipv4 = localIPv4
             };
         }
     }
