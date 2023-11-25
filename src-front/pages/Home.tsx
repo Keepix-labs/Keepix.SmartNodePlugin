@@ -106,9 +106,9 @@ export default function HomePage() {
         <BigLoader title="Estimation: 1 hour to several days." disableLabel={true} full={true}>
           <div className="state-title">
                 <strong>{`Execution Sync Progress:`}</strong>
-                <Progress percent={Number(syncProgressQuery?.data.executionSyncProgress)}></Progress>
+                <Progress percent={Number(syncProgressQuery?.data.executionSyncProgress)} description={syncProgressQuery?.data.executionSyncProgressStepDescription ?? ''}></Progress>
                 <strong>{`Consensus Sync Progress:`}</strong>
-                <Progress percent={Number(syncProgressQuery?.data.consensusSyncProgress)}></Progress>
+                <Progress percent={Number(syncProgressQuery?.data.consensusSyncProgress)} description={syncProgressQuery?.data.consensusSyncProgressStepDescription ?? ''}></Progress>
                 {/* <strong><Icon icon="svg-spinners:3-dots-scale" /></strong> */}
           </div>
           <FAQ questions={faqSyncProgress}></FAQ>
