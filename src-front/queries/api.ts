@@ -25,6 +25,14 @@ export const getPluginSyncProgress = async () =>
     parser: (data: any) => { return JSON.parse(data.result); } 
   });
 
+export const getPluginMiniPools = async () => 
+  request<any>({
+    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/minipool-fetch`,
+    method: 'GET',
+    name: "getPluginMiniPools",
+    parser: (data: any) => { return JSON.parse(data.result); } 
+  });
+
 // Functions
 async function request<T>(options: any) {
   if (options.method === undefined) {

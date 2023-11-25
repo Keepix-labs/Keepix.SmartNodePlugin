@@ -10,8 +10,10 @@ type PropsBtn = {
   icon?: string;
   status?: Status;
   color?: string;
+  borderRadius?: string;
   onClick?: () => void;
   children: ReactNode;
+  target?: string;
 };
 
 export default function Btn({
@@ -20,6 +22,8 @@ export default function Btn({
   children,
   status,
   color,
+  borderRadius,
+  target,
   onClick,
 }: PropsBtn) {
   const Content = (
@@ -31,14 +35,14 @@ export default function Btn({
 
   if (onClick) {
     return (
-      <button onClick={onClick} className="Btn-btn" data-status={status} style={{color: color}}>
+      <button onClick={onClick} className="Btn-btn" data-status={status} style={{color: color, borderRadius: borderRadius}}>
         {Content}
       </button>
     );
   }
 
   return (
-    <Link to={href ? href : ''} className="Btn-btn" data-status={status} style={{color: color}}>
+    <Link to={href ? href : ''} target={target} className="Btn-btn" data-status={status} style={{color: color, borderRadius: borderRadius}}>
       {Content}
     </Link>
   );

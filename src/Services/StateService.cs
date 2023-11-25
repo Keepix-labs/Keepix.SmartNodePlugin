@@ -184,5 +184,83 @@ namespace Keepix.SmartNodePlugin.Services
             string result = Shell.ExecuteCommand("~/bin/rocketpool --allow-root minipool status");
             return result;
         }
+
+        public static NodeInformation getNodeInformations() {
+            string data = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
+            
+            string ethWalletBalance = "0";
+            string rplWalletBalance = "0";
+            Match matchOfWalletBalances = Regex.Match(data, @"has a balance of (\d+\.\d+) ETH and (\d+\.\d+) RPL");
+            if (matchOfWalletBalances.Success) {
+                ethWalletBalance = matchOfWalletBalances.Groups[1].Value;
+                rplWalletBalance = matchOfWalletBalances.Groups[2].Value;
+            }
+            Console.WriteLine("Wallet: " + ethWalletBalance + " ETH");
+            Console.WriteLine("Wallet: " + rplWalletBalance + " RPL");
+            
+            string nodeCreditBalance = "0";
+            Match matchNodeCreditBalance = Regex.Match(data, @"The node has (\d+\.\d+) ETH in its credit balance");
+            if (matchNodeCreditBalance.Success) {
+                nodeCreditBalance = matchOfWalletBalances.Groups[1].Value;
+            }
+            Console.WriteLine("Node Credit Balance: " + nodeCreditBalance + " ETH");
+            
+            bool isRegistered = false;
+            Match matchRegistered = Regex.Match(data, @"The node is registered with Rocket Pool");
+            if (matchRegistered.Success) {
+                isRegistered = true;
+            }
+            Console.WriteLine("Node IsRegistered: " + isRegistered);
+            
+            //The node has a total stake of
+            
+            string nodeRPLStakedBalance = "0";
+            string nodeRPLStakedEffectiveBalance = "0";
+            Match matchNodeStakedBalance = Regex.Match(data, @"The node has a total stake of (\d+\.\d+) RPL and an effective stake of (\d+\.\d+) RPL");
+            if (matchNodeStakedBalance.Success) {
+                nodeRPLStakedBalance = matchNodeStakedBalance.Groups[1].Value;
+                nodeRPLStakedEffectiveBalance = matchNodeStakedBalance.Groups[2].Value;
+            }
+            Console.WriteLine("Node Staked RPL: " + nodeRPLStakedBalance + " RPL");
+            Console.WriteLine("Node Effective Staked RPL: " + nodeRPLStakedEffectiveBalance + " RPL");
+            
+            //This is currently 11.23% of its borrowed ETH and 33.68% of its bonded ETH.
+            string nodeRPLStakedBorrowedETHPercentage = "0";
+            string nodeRPLStakedBondedETHPercentage = "0";
+            Match matchNodeRPLStakedBorrowedETHPercentage = Regex.Match(data, @"This is currently (\d+\.\d+)\% of its borrowed ETH and (\d+\.\d+)\% of its bonded ETH");
+            if (matchNodeRPLStakedBorrowedETHPercentage.Success) {
+                nodeRPLStakedBorrowedETHPercentage = matchNodeRPLStakedBorrowedETHPercentage.Groups[1].Value;
+                nodeRPLStakedBondedETHPercentage = matchNodeRPLStakedBorrowedETHPercentage.Groups[2].Value;
+            }
+            Console.WriteLine("Node Staked RPL % of Borrowed ETH: " + nodeRPLStakedBorrowedETHPercentage + " %");
+            Console.WriteLine("Node Staked RPL % of Bonded ETH: " + nodeRPLStakedBondedETHPercentage + " %");
+            
+            string nodeMinimumRPLStakeNeeded = "0";
+            Match matchNodeMinimumRPLStakeNeeded = Regex.Match(data, @"It must keep at least (\d+\.\d+) RPL staked to claim RPL rewards");
+            if (matchNodeMinimumRPLStakeNeeded.Success) {
+                nodeMinimumRPLStakeNeeded = matchNodeMinimumRPLStakeNeeded.Groups[1].Value;
+            }
+            Console.WriteLine("Node Most minimal RPL stake to claim RPL rewards: " + nodeMinimumRPLStakeNeeded + " RPL (10% of borrowed ETH)");
+            
+            string nodeMaximumRPLStakePossible = "0";
+            Match matchNodeMaximumRPLStakePossible = Regex.Match(data, @"It can earn rewards on up to (\d+\.\d+) RPL");
+            if (matchNodeMaximumRPLStakePossible.Success) {
+                nodeMaximumRPLStakePossible = matchNodeMaximumRPLStakePossible.Groups[1].Value;
+            }
+            Console.WriteLine("Node Most maximal RPL stake to claim RPL rewards: " + nodeMaximumRPLStakePossible + " RPL (150% of bonded ETH)");
+
+            return new NodeInformation() {
+                ethWalletBalance = ethWalletBalance,
+                rplWalletBalance = rplWalletBalance,
+                nodeCreditBalance = nodeCreditBalance,
+                isRegistered = isRegistered,
+                nodeRPLStakedBalance = nodeRPLStakedBalance,
+                nodeRPLStakedEffectiveBalance = nodeRPLStakedEffectiveBalance,
+                nodeRPLStakedBorrowedETHPercentage = nodeRPLStakedBorrowedETHPercentage,
+                nodeRPLStakedBondedETHPercentage = nodeRPLStakedBondedETHPercentage,
+                nodeMinimumRPLStakeNeeded = nodeMinimumRPLStakeNeeded,
+                nodeMaximumRPLStakePossible = nodeMaximumRPLStakePossible
+            };
+        }
     }
 }

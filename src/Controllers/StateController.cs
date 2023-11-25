@@ -126,7 +126,14 @@ namespace Keepix.SmartNodePlugin.Controllers
             });
         }
 
-        
+        [KeepixPluginFn("node-fetch")]
+        public static async Task<string> OnNodeFetch()
+        {
+            var node = StateService.getNodeInformations();
+            return JsonConvert.SerializeObject(new {
+                node
+            });
+        }
         
     }
 }
