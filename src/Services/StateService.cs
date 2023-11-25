@@ -102,11 +102,7 @@ namespace Keepix.SmartNodePlugin.Services
                     if (result.Contains("Downloaded")) {
                         string executionDownloadProgressPattern = @"\( \d+\.\d+ %\) |";
                         MatchCollection matches = Regex.Matches(result, executionDownloadProgressPattern);
-                        executionSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "0.00");
-                        if (executionSyncProgress == "100") {
-                            // Since I'm taking the information from the logs, I'm restoring the state that rocketpool should have at that moment, i.e. 99.99%.
-                            executionSyncProgress = "99.99";
-                        }
+                        executionSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "100");
                     }
                 } catch (Exception) {}
             }
