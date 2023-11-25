@@ -100,7 +100,7 @@ namespace Keepix.SmartNodePlugin.Services
                     //Downloaded   374,457 / 387,633 ( 96.60 %) |
                     var result = Shell.ExecuteCommand("docker container logs keepix_eth1");
                     if (result.Contains("Downloaded") || result.Contains("Old Headers")) {
-                        string executionDownloadProgressPattern = @"\( \d+\.\d+ %\) |";
+                        string executionDownloadProgressPattern = @"\( \d+\.\d+ %\) \|";
                         MatchCollection matches = Regex.Matches(result, executionDownloadProgressPattern);
                         executionSyncProgress = (matches.Count > 0 ? matches[matches.Count - 1].Value.Replace("%", "").Replace("|", "").Replace("(", "").Replace(")", "").Trim() : "100");
                         if (executionSyncProgress == "100") {
