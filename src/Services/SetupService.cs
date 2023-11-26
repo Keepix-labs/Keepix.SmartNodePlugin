@@ -128,7 +128,7 @@ namespace Keepix.SmartNodePlugin.Services
 
                 // besu + teku
                 var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                " --executionClient besu --consensusClient teku --teku-containerTag consensys/teku:latest --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external";
+                " --executionClient besu --consensusClient teku --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external";
 
                 if (network == "mainnet")
                 {
