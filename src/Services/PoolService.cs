@@ -50,5 +50,26 @@ namespace Keepix.SmartNodePlugin.Services
 
             return result;
         }
+
+        public static string UnStakeRPL(decimal amount) 
+        {
+            string result;
+            var cli = $"~/bin/rocketpool --allow-root node withdraw-rpl --amount {amount} --yes --swap";
+
+            result = Shell.ExecuteCommand(cli);
+            if (result.Contains("transfer amount exceeds balance")) {
+                return $"You do not have {amount} RPL on the node wallet, transfer them or make a swap from ETH to RPL.";
+            }
+
+            if (result.Contains("Could not get can node stake RPL status") 
+            || result.Contains("Error") || result.Contains("Could not")) 
+                return result;
+
+            if (result.Contains("Successfully Withdraw")) {
+                return string.Empty;
+            }
+
+            return result;
+        }
     }
 }

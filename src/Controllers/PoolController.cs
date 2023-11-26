@@ -47,6 +47,37 @@ namespace Keepix.SmartNodePlugin.Controllers
             return true;
         }
 
+        [KeepixPluginFn("unstake-rpl")]
+        public static async Task<bool> OnUnStakingRpl(StakeRplInput input)
+        {
+            stateManager = PluginStateManager.GetStateManager();
+            bool isRegistered = false;
+            bool isAlive = SetupService.IsNodeRunning();
+            bool isSync = StateService.IsNodeSynced();
+            
+            try { isRegistered = stateManager.DB.Retrieve<bool>("REGISTERED"); } catch (Exception) {}
+            if (!isRegistered) {
+                Console.WriteLine("Please first register your node on the network.");
+                return false;
+            }
+            if (!isAlive) {
+                Console.WriteLine("Please start the node before trying to stake RPL");
+                return false;
+            }
+            if (!isSync) {
+                Console.WriteLine("Your ETH node is not synced yet on the network, please try later.");
+                return false;
+            }
+            string error = PoolService.UnStakeRPL(input.Amount);
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine($"An error occured while trying to unstake RPL: {error}");
+                return false;
+            }
+
+            Console.WriteLine($"You successfully unstaked {input.Amount} RPL.");
+            return true;
+        }
+
         [KeepixPluginFn("create-pool")]
         public static async Task<bool> OnPoolCreation(CreatePoolInput input)
         {
