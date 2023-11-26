@@ -1,6 +1,6 @@
 import "./Logo.scss";
 
-const Logo = ({ text = true }: any) => {
+const Logo = ({ text = true, width = undefined }: any) => {
   const y = 90.5;
   const x = 156.5;
 
@@ -20,7 +20,7 @@ const Logo = ({ text = true }: any) => {
 
   return (
     <div className="Logo-logo">
-      <svg className="Logo-logoSigle" viewBox="0 0 1437 1020">
+      <svg className="Logo-logoSigle" style={{ width: width }} viewBox="0 0 1437 1020">
         {cubes.map((cube, index) => (
           <use
             key={index}

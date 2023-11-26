@@ -15,6 +15,8 @@ import FAQ from "../components/Faq/Faq";
 import Progress from "../components/Progress/Progress";
 import { MiniPool } from "../components/MiniPool/MiniPool";
 import { Node } from "../components/Node/Node";
+import { NewMiniPool } from "../components/NewMiniPool/NewMiniPool";
+import { RplStaking } from "../components/RplStaking/RplStaking";
 
 
 const faqSyncProgress: any[] = [
@@ -39,6 +41,8 @@ const faqSyncProgress: any[] = [
 export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [newMiniPoolDisplay, setNewMiniPoolDisplay] = useState(false);
+  const [stakeRplDisplay, setStakeRplDisplay] = useState(false);
+  const [manageMiniPoolsDisplay, setManageMiniPoolsDisplay] = useState(false);
   
   const walletQuery = useQuery({
     queryKey: ["getPluginWallet"],
@@ -231,6 +235,8 @@ export default function HomePage() {
       
       {/* Has one or more Pool */}
       {!newMiniPoolDisplay
+        && !stakeRplDisplay
+        && !manageMiniPoolsDisplay
         && statusQuery?.data && syncProgressQuery?.data
         && syncProgressQuery?.data?.IsSynced === true
         && statusQuery.data?.NodeState === 'NODE_RUNNING'
@@ -238,7 +244,28 @@ export default function HomePage() {
         && statusQuery.data?.IsRegistered === true
         && miniPoolsQuery?.data
         && miniPoolsQuery?.data?.length > 0 && (<>
-        <Node wallet={walletQuery.data?.Wallet} status={statusQuery?.data} ></Node>
+        <Node wallet={walletQuery.data?.Wallet} minipools={miniPoolsQuery?.data ?? []} status={statusQuery?.data} ></Node>
+        <div className="home-row-3" >
+          <div></div>
+          <Btn
+            icon="material-symbols:lock"
+            status="gray-black"
+            color="white"
+            onClick={async () => { setStakeRplDisplay(true); }}
+          >Manage RPL Staking</Btn>
+          <div></div>
+        </div>
+        <div className="home-row-3" >
+          <div></div>
+          <Btn
+            icon="system-uicons:grid-small"
+            status="gray-black"
+            color="white"
+            onClick={async () => { setManageMiniPoolsDisplay(true); }}
+            disabled={miniPoolsQuery?.data?.length === 0}
+          >Manage My MiniPools ({miniPoolsQuery?.data?.length})</Btn>
+          <div></div>
+        </div>
         <div className="home-row-3" >
           <div></div>
           <Btn
@@ -249,7 +276,34 @@ export default function HomePage() {
           >Create One New MiniPool</Btn>
           <div></div>
         </div>
-        { miniPoolsQuery?.data.map((pool: any, index, array) => <MiniPool key={index} index={index + 1} total={array.length} pool={pool} wallet={walletQuery.data?.Wallet} ></MiniPool>)}
+      </>)}
+
+      {/* Manage MiniPools */}
+      {manageMiniPoolsDisplay
+        && statusQuery?.data && syncProgressQuery?.data
+        && syncProgressQuery?.data?.IsSynced === true
+        && statusQuery.data?.NodeState === 'NODE_RUNNING'
+        && walletQuery.data?.Wallet !== undefined
+        && statusQuery.data?.IsRegistered === true
+        && miniPoolsQuery?.data && (<>
+          <div className="card card-default">
+            <div className="home-row-full" >
+                  <Btn
+                  status="gray-black"
+                  color="white"
+                  onClick={async () => { setManageMiniPoolsDisplay(false); }}
+                  >Back</Btn>
+            </div>
+            <header className="AppBase-header">
+                <div className="AppBase-headerIcon icon-app">
+                <Icon icon="ion:rocket" />
+                </div>
+                <div className="AppBase-headerContent">
+                <h1 className="AppBase-headerTitle">Manage my MiniPools</h1>
+                </div>
+            </header>
+            { miniPoolsQuery?.data.map((pool: any, index, array) => <MiniPool key={index} index={index + 1} total={array.length} pool={pool} wallet={walletQuery.data?.Wallet} ></MiniPool>)}
+          </div>
       </>)}
 
       {/* Add new MiniPool */}
@@ -260,15 +314,18 @@ export default function HomePage() {
         && walletQuery.data?.Wallet !== undefined
         && statusQuery.data?.IsRegistered === true
         && miniPoolsQuery?.data && (<>
-          <div className="home-row-3" >
-            <Btn
-              status="gray-black"
-              color="white"
-              onClick={async () => { setNewMiniPoolDisplay(false); }}
-            >Back</Btn>
-            <div></div>
-            <div></div>
-          </div>
+          <NewMiniPool wallet={walletQuery.data?.Wallet} minipools={miniPoolsQuery?.data ?? []} status={statusQuery?.data} backFn={() => { setNewMiniPoolDisplay(false); }}></NewMiniPool>
+      </>)}
+
+      {/* stake Rpl */}
+      {stakeRplDisplay
+        && statusQuery?.data && syncProgressQuery?.data
+        && syncProgressQuery?.data?.IsSynced === true
+        && statusQuery.data?.NodeState === 'NODE_RUNNING'
+        && walletQuery.data?.Wallet !== undefined
+        && statusQuery.data?.IsRegistered === true
+        && miniPoolsQuery?.data && (<>
+          <RplStaking wallet={walletQuery.data?.Wallet} minipools={miniPoolsQuery?.data ?? []} status={statusQuery?.data} backFn={() => { setStakeRplDisplay(false); }}></RplStaking>
       </>)}
       <Sprites></Sprites>
     </div>

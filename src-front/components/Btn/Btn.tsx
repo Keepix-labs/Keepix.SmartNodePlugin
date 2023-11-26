@@ -14,6 +14,7 @@ type PropsBtn = {
   onClick?: () => void;
   children: ReactNode;
   target?: string;
+  disabled?: boolean;
 };
 
 export default function Btn({
@@ -24,6 +25,7 @@ export default function Btn({
   color,
   borderRadius,
   target,
+  disabled = false,
   onClick,
 }: PropsBtn) {
   const Content = (
@@ -35,7 +37,7 @@ export default function Btn({
 
   if (onClick) {
     return (
-      <button onClick={onClick} className="Btn-btn" data-status={status} style={{color: color, borderRadius: borderRadius}}>
+      <button onClick={onClick} className="Btn-btn" data-status={status} style={{color: color, borderRadius: borderRadius}} disabled={disabled}>
         {Content}
       </button>
     );

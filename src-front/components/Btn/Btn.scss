@@ -25,6 +25,11 @@
       transform: scale(0.95);
     }
 
+    &:disabled {
+      --opacity: var(--opacity-tertiary);
+      filter: brightness(0.8);
+    }
+
     iconify-icon {
       top: 0.1em;
       margin-right: -0.5em;

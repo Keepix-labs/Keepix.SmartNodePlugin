@@ -12,6 +12,7 @@ type PropsBtn = {
   status?: Status;
   color?: string;
   onClick?: () => void;
+  userSelect?: 'none' | 'all' | 'text';
   children: ReactNode;
 };
 
@@ -23,6 +24,7 @@ export default function Field({
   status,
   color,
   onClick,
+  userSelect = 'none',
 }: PropsBtn) {
   const Content = (
     <>
@@ -34,14 +36,14 @@ export default function Field({
 
   if (onClick) {
     return (
-      <button onClick={onClick} className="Field-field" data-status={status} style={{color: color}} disabled>
+      <button onClick={onClick} className="Field-field" data-status={status} style={{color: color, userSelect: userSelect}} disabled>
         {Content}
       </button>
     );
   }
 
   return (
-    <button className="Field-field" data-status={status} style={{color: color}}>
+    <button className="Field-field" data-status={status} style={{color: color, userSelect: userSelect }}>
       {Content}
     </button>
   );
