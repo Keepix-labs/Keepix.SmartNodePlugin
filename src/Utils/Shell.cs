@@ -35,7 +35,7 @@ namespace Keepix.SmartNodePlugin.Utils
                 process.WaitForExit(TimeSpan.FromSeconds(waitForExit));
             }
 
-            while (!process.HasExited && !process.StandardOutput.EndOfStream) {
+            while (!process.StandardOutput.EndOfStream) {
                 // we just need to make sure we catch the before last line else we hang here
                 string? line = process.StandardOutput.ReadLine();
                 if (conditions != null && line != null) {
