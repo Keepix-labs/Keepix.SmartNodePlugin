@@ -39,10 +39,6 @@ namespace Keepix.SmartNodePlugin.Controllers
             }
             string error = PoolService.StakeRPL(input.Amount);
             if (!string.IsNullOrEmpty(error)) {
-                if (error.Contains("Validator pubkey is in use")) {
-                    Console.WriteLine($"Wallet Already used on another Registered RocketPool Node. error: {error}");
-                    return false;
-                }
                 Console.WriteLine($"An error occured while trying to stake RPL: {error}");
                 return false;
             }
@@ -105,6 +101,10 @@ namespace Keepix.SmartNodePlugin.Controllers
             }
             var error = PoolService.CreateMiniPool(input.SmallPool);
             if (!string.IsNullOrEmpty(error)) {
+                if (error.Contains("Validator pubkey is in use")) {
+                    Console.WriteLine($"Wallet Already used on another Registered RocketPool Node. error: {error}");
+                    return false;
+                }
                 Console.WriteLine($"An error occured while trying to stake ETH: {error}");
                 return false;
             }
