@@ -49,6 +49,7 @@ namespace Keepix.SmartNodePlugin.Utils
             process.WaitForExit(TimeSpan.FromMinutes(5));
             if (process.ExitCode != 0)
             {
+                Console.WriteLine("ExitCode " + process.ExitCode);
                 throw new Exception(output);
             }
             return output;
