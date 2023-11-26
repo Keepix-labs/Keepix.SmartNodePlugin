@@ -52,9 +52,8 @@ namespace Keepix.SmartNodePlugin.Utils
             }
 
             process.WaitForExit(TimeSpan.FromMinutes(5));
-            if (process.ExitCode != 0)
+            if (process.ExitCode != 0 && process.ExitCode != 137) // 137 equals forced exit.
             {
-                Console.WriteLine("ExitCode " + process.ExitCode);
                 throw new Exception(output);
             }
             return output;
