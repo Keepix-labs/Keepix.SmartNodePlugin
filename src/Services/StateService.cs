@@ -185,6 +185,24 @@ namespace Keepix.SmartNodePlugin.Services
             return result;
         }
 
+        public static (string minimumSmallPoolStake, string minimumMiniPoolStake) getMinimumRplStake() {
+            var data = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node stake-rpl", null, 5);
+            
+            string minimumSmallPoolStake = "0";
+            string minimumMiniPoolStake = "0";
+            Match matchMinimumSmallPoolStake = Regex.Match(data, @"minimum minipool stake amount for an 8-ETH minipool \((\d+\.\d+) RPL\)");
+            if (matchMinimumSmallPoolStake.Success) {
+                minimumSmallPoolStake = matchMinimumSmallPoolStake.Groups[1].Value;
+            }
+            Match matchMinimumMiniPoolStake = Regex.Match(data, @"minimum minipool stake amount for an 16-ETH minipool \((\d+\.\d+) RPL\)");
+            if (matchMinimumMiniPoolStake.Success) {
+                minimumMiniPoolStake = matchMinimumMiniPoolStake.Groups[1].Value;
+            }
+            Console.WriteLine("Minimum Small Pool Stake (8-ETH): " + minimumSmallPoolStake + " RPL");
+            Console.WriteLine("Minimum Mini Pool Stake (16-ETH): " + minimumMiniPoolStake + " RPL");
+            return (minimumSmallPoolStake, minimumMiniPoolStake);
+        }
+
         public static NodeInformation getNodeInformations() {
             string data = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
             

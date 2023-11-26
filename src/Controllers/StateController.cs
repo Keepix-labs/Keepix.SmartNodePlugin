@@ -134,6 +134,16 @@ namespace Keepix.SmartNodePlugin.Controllers
                 node
             });
         }
+
+        [KeepixPluginFn("minimum-stake-amounts")]
+        public static async Task<string> getMinimumRplStake()
+        {
+            (string minimumSmallPoolStake, string minimumMiniPoolStake) = StateService.getMinimumRplStake();
+            return JsonConvert.SerializeObject(new {
+                minimumSmallPoolStake,
+                minimumMiniPoolStake
+            });
+        }
         
     }
 }
