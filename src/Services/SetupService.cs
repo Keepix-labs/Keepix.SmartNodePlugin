@@ -122,8 +122,13 @@ namespace Keepix.SmartNodePlugin.Services
 
                 var network = installInput.Mainnet ? "mainnet" : "holesky";
 
+                //nethermind besu
+                // var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
+                // " --executionClient nethermind --consensusClient nimbus --nimbus-additionalBnFlags '--web3-url=http://127.0.0.1:8551' --nethermind-containerTag nethermind/nethermind:latest --executionCommon-openRpcPorts external";
+
+                // besu
                 var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                " --executionClient nethermind --consensusClient nimbus --nimbus-additionalBnFlags '--web3-url=http://127.0.0.1:8551' --nethermind-containerTag nethermind/nethermind:latest --executionCommon-openRpcPorts external";
+                " --executionClient besu --consensusClient nimbus --nimbus-additionalBnFlags '--web3-url=http://127.0.0.1:8551' --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external";
 
                 if (network == "mainnet")
                 {
