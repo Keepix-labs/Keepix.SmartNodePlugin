@@ -35,7 +35,7 @@ namespace Keepix.SmartNodePlugin.Utils
                 process.WaitForExit(TimeSpan.FromSeconds(waitForExit));
             }
 
-            while (!process.StandardOutput.EndOfStream) {
+            while (!_process.HasExited && _process.Responding && !process.StandardOutput.EndOfStream) {
                 // we just need to make sure we catch the before last line else we hang here
                 string? line = process.StandardOutput.ReadLine();
                 if (conditions != null && line != null) {
@@ -51,7 +51,6 @@ namespace Keepix.SmartNodePlugin.Utils
                     }
                 }
                 output += string.IsNullOrEmpty(output) ? line : "\n" + line;
-
                 // if (waitForExit != -1) {
                 //     var now = DateTime.UtcNow;
                 //     var secsSpent = (now - time).TotalSeconds;
@@ -60,6 +59,7 @@ namespace Keepix.SmartNodePlugin.Utils
                 //         process.Kill();
                 //     }
                 // }
+                Thread.Sleep(100);
             }
 
             if (waitForExit == -1) {
