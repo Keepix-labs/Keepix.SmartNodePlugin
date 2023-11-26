@@ -54,7 +54,7 @@ namespace Keepix.SmartNodePlugin.Services
         public static string UnStakeRPL(decimal amount) 
         {
             string result;
-            var cli = $"~/bin/rocketpool --allow-root node withdraw-rpl --amount {amount} --yes --swap";
+            var cli = $"~/bin/rocketpool --allow-root node withdraw-rpl --amount {amount} --yes";
 
             result = Shell.ExecuteCommand(cli);
             if (result.Contains("transfer amount exceeds balance")) {
