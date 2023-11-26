@@ -87,6 +87,30 @@ const executeServer = () => {
         res.send(runningTasks[req.params.taskId]);
     });
 
+    // plugin view static files
+    app.use((req, res, next) => {
+        if (req?.url?.startsWith('/plugins/')) {
+        const pluginIdAndSubPath = (req.url.split('/plugins/')[1]).split('/');
+        // const pluginId = pluginIdAndSubPath[0];
+        const subPathWithView = pluginIdAndSubPath.slice(1).join('/');
+
+        if (subPathWithView.startsWith('view')) {
+            const subPath = subPathWithView.substr(4);
+
+            const staticPluginPath = path.join(__dirname, 'public');
+            
+            if (!fs.existsSync(path.join(staticPluginPath, subPath.split('?')[0]))) {
+            req.url = '/index.html';
+            }
+            req.url = subPath;
+
+            express.static(staticPluginPath)(req, res, next);
+            return ;
+        }
+        }
+        next();
+    });
+
     http.createServer(app).listen(app.get('port'), app.get('host'), function(){
         console.log('Express server listening on port ' + app.get('port'));
     });
