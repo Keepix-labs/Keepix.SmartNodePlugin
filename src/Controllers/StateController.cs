@@ -135,7 +135,7 @@ namespace Keepix.SmartNodePlugin.Controllers
             });
         }
 
-        [KeepixPluginFn("minimum-stake-amounts")]
+        [KeepixPluginFn("fetch-minimum-pool-stake-rpl-amounts")]
         public static async Task<string> getMinimumRplStake()
         {
             (string minimumSmallPoolStake, string minimumMiniPoolStake) = StateService.getMinimumRplStake();
