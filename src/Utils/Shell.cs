@@ -35,7 +35,7 @@ namespace Keepix.SmartNodePlugin.Utils
                     var conditionMet = conditions.FirstOrDefault(x => line.Contains(x.content));
                     if (conditionMet != null) {
                         foreach(var answer in conditionMet.answers) {
-                            if (answer.Length > 0 && answer[0] == "[STOP_PROCESS]") process.kill();
+                            if (answer.Length > 0 && answer == "[STOP_PROCESS]") process.kill();
                             else if (answer.Length > 0) process.StandardInput.WriteLine(answer);
                             else process.StandardInput.WriteLine(); // in case we just need to send an empty entry to be processed
                             Thread.Sleep(500);
