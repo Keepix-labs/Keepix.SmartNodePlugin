@@ -186,7 +186,15 @@ namespace Keepix.SmartNodePlugin.Services
         }
 
         public static (string minimumSmallPoolStake, string minimumMiniPoolStake) getMinimumRplStake() {
-            var data = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node stake-rpl", null, 5);
+            var data = Shell.ExecuteCommand(
+                "~/bin/rocketpool --allow-root node stake-rpl", new List<ShellCondition>()
+             {
+                new ShellCondition()
+                {
+                    content = "6: A custom amount",
+                    answers = new string[] {"[STOP_PROCESS]", ""}
+                }
+            });
             
             string minimumSmallPoolStake = "0";
             string minimumMiniPoolStake = "0";

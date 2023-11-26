@@ -28,13 +28,6 @@ namespace Keepix.SmartNodePlugin.Utils
 
             process.Start();
             string output = string.Empty;
-           
-            var time = DateTime.UtcNow;
-
-            if (waitForExit != -1) {
-                process.WaitForExit(TimeSpan.FromSeconds(waitForExit));
-            }
-
             while (!process.StandardOutput.EndOfStream) {
                 // we just need to make sure we catch the before last line else we hang here
                 string? line = process.StandardOutput.ReadLine();
@@ -42,34 +35,22 @@ namespace Keepix.SmartNodePlugin.Utils
                     var conditionMet = conditions.FirstOrDefault(x => line.Contains(x.content));
                     if (conditionMet != null) {
                         foreach(var answer in conditionMet.answers) {
-                            if (answer.Length > 0) process.StandardInput.WriteLine(answer);
+                            if (answer.Length > 0 && answer[0] == "[STOP_PROCESS]") process.kill();
+                            else if (answer.Length > 0) process.StandardInput.WriteLine(answer);
                             else process.StandardInput.WriteLine(); // in case we just need to send an empty entry to be processed
                             Thread.Sleep(500);
                         }
-
-                         Thread.Sleep(1500); // once we met a condition we let time to terminal for processing the next conditions
+                        Thread.Sleep(1500); // once we met a condition we let time to terminal for processing the next conditions
                     }
                 }
                 output += string.IsNullOrEmpty(output) ? line : "\n" + line;
-                // if (waitForExit != -1) {
-                //     var now = DateTime.UtcNow;
-                //     var secsSpent = (now - time).TotalSeconds;
-
-                //     if (secsSpent >= waitForExit) {
-                //         process.Kill();
-                //     }
-                // }
-                Thread.Sleep(100);
             }
 
-            if (waitForExit == -1) {
-                process.WaitForExit(TimeSpan.FromMinutes(5));
-            }
+            process.WaitForExit(TimeSpan.FromMinutes(5));
             if (process.ExitCode != 0)
             {
                 throw new Exception(output);
             }
-
             return output;
         }
     }
