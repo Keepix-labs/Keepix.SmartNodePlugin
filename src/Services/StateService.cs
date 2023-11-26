@@ -202,7 +202,7 @@ namespace Keepix.SmartNodePlugin.Services
             if (matchMinimumSmallPoolStake.Success) {
                 minimumSmallPoolStake = matchMinimumSmallPoolStake.Groups[1].Value;
             }
-            Match matchMinimumMiniPoolStake = Regex.Match(data, @"minimum minipool stake amount for an 16-ETH minipool \((\d+\.\d+) RPL\)");
+            Match matchMinimumMiniPoolStake = Regex.Match(data, @"minimum minipool stake amount for a 16-ETH minipool \((\d+\.\d+) RPL\)");
             if (matchMinimumMiniPoolStake.Success) {
                 minimumMiniPoolStake = matchMinimumMiniPoolStake.Groups[1].Value;
             }
