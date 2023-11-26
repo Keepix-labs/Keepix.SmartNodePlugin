@@ -27,15 +27,20 @@ namespace Keepix.SmartNodePlugin.Utils
             };
 
             process.Start();
+            bool forceExit = false;
             string output = string.Empty;
-            while (!process.StandardOutput.EndOfStream) {
+            while (!forceExit && !process.StandardOutput.EndOfStream) {
                 // we just need to make sure we catch the before last line else we hang here
                 string? line = process.StandardOutput.ReadLine();
                 if (conditions != null && line != null) {
                     var conditionMet = conditions.FirstOrDefault(x => line.Contains(x.content));
                     if (conditionMet != null) {
                         foreach(var answer in conditionMet.answers) {
-                            if (answer.Length > 0 && answer == "[STOP_PROCESS]") process.Kill();
+                            if (answer.Length > 0 && answer == "[STOP_PROCESS]") {
+                                process.Kill();
+                                forceExit = true;
+                                break ;
+                            }
                             else if (answer.Length > 0) process.StandardInput.WriteLine(answer);
                             else process.StandardInput.WriteLine(); // in case we just need to send an empty entry to be processed
                             Thread.Sleep(500);
