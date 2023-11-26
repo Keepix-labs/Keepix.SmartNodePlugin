@@ -128,7 +128,7 @@ namespace Keepix.SmartNodePlugin.Services
 
                 // besu + lighthouse
                 var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                " --executionClient besu --consensusClient lighthouse --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external";
+                " --executionClient besu --consensusClient lighthouse --lighthouse-containerTag sigp/lighthouse:latest --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external";
 
                 if (network == "mainnet")
                 {
