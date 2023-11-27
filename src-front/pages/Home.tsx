@@ -270,18 +270,15 @@ export default function HomePage() {
               <h1 className="AppBase-headerTitle">Actions</h1>
               </div>
           </header>
-          <div className="home-row-3" >
-            <div></div>
+          <div className="home-row-full" >
             <Btn
               icon="material-symbols:lock"
               status="gray-black"
               color="white"
               onClick={async () => { setStakeRplDisplay(true); }}
             >Manage RPL Staking</Btn>
-            <div></div>
           </div>
-          <div className="home-row-3" >
-            <div></div>
+          <div className="home-row-full" >
             <Btn
               icon="system-uicons:grid-small"
               status="gray-black"
@@ -289,17 +286,14 @@ export default function HomePage() {
               onClick={async () => { setManageMiniPoolsDisplay(true); }}
               disabled={miniPoolsQuery?.data?.length === 0}
             >Manage My MiniPools ({miniPoolsQuery?.data?.length})</Btn>
-            <div></div>
           </div>
-          <div className="home-row-3" >
-            <div></div>
+          <div className="home-row-full" >
             <Btn
               icon="fe:plus"
               status="gray-black"
               color="white"
               onClick={async () => { setNewMiniPoolDisplay(true); }}
             >Create One New MiniPool</Btn>
-            <div></div>
           </div>
         </div>
       </>)}

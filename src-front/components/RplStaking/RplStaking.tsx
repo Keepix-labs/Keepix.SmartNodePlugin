@@ -101,33 +101,31 @@ export const RplStaking = ({ wallet, status, minipools, backFn }: any) => {
                     >{ nodeInformationQuery.data.node.rplWalletBalance } RPL</Field>
                 )}
             </div>
-            <div className="home-row-full" >
-                {!miniPoolMinimumStakeRplAmountsQuery.data && (<Loader></Loader>)}
-                {miniPoolMinimumStakeRplAmountsQuery.data && (
-                    <Field
-                        status="warning"
-                        title="Minimum Staking Needed for build 8-ETH Minipool"
-                        icon="ion:rocket"
-                        color="white"
-                    >{ miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake } RPL</Field>
-                )}
-            </div>
-            <div className="home-row-full" >
-                {!miniPoolMinimumStakeRplAmountsQuery.data && (<Loader></Loader>)}
-                {miniPoolMinimumStakeRplAmountsQuery.data && (
-                    <Field
-                        status="warning"
-                        title="Minimum Staking Needed for build 16-ETH Minipool"
-                        icon="ion:rocket"
-                        color="white"
-                    >{ miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake } RPL</Field>
-                )}
-            </div>
             {(!nodeInformationQuery.data || !miniPoolMinimumStakeRplAmountsQuery.data) && (<Loader></Loader>)}
             {nodeInformationQuery.data
                 && miniPoolMinimumStakeRplAmountsQuery.data
                 && (<>
                 <div className="card card-default">
+                    <div className="home-row-full" >
+                        {!miniPoolMinimumStakeRplAmountsQuery.data && (<Loader></Loader>)}
+                        {miniPoolMinimumStakeRplAmountsQuery.data && (
+                            <Field
+                                status="info"
+                                title="Minimum Staking Needed for build 8-ETH Minipool"
+                                color="white"
+                            >{ miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake } RPL</Field>
+                        )}
+                    </div>
+                    <div className="home-row-full" >
+                        {!miniPoolMinimumStakeRplAmountsQuery.data && (<Loader></Loader>)}
+                        {miniPoolMinimumStakeRplAmountsQuery.data && (
+                            <Field
+                                status="info"
+                                title="Minimum Staking Needed for build 16-ETH Minipool"
+                                color="white"
+                            >{ miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake } RPL</Field>
+                        )}
+                    </div>
                     <div className="home-row-full">
                         <Field
                                 status="gray-black"

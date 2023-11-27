@@ -39,7 +39,7 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                 </div>
                 <div className="AppBase-headerContent">
                 <h1 className="AppBase-headerTitle">Your Ethereum Node</h1>
-                <div className="AppBase-headerSubtitle">Information and actions</div>
+                <div className="AppBase-headerSubtitle">Information & actions</div>
                 </div>
             </header>
             <div className="home-row-full" >

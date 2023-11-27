@@ -101,57 +101,46 @@ export const NewMiniPool = ({ wallet, status, minipools, backFn }: any) => {
                 )}
             </div>
             {(!nodeInformationQuery.data || !miniPoolMinimumStakeRplAmountsQuery.data) && (<Loader></Loader>)}
-            {miniPoolMinimumStakeRplAmountsQuery.data
-                && nodeInformationQuery.data
-                && nodeInformationQuery.data.node.ethWalletBalance < 8 && (<>
-                <div className="home-row-full" >
-                        <Field
-                            status="danger"
-                            title="Error"
-                            color="white"
-                        >You currently have less than 8 ETH in your wallet. Please add Ethereum to your wallet to create a new MiniPool</Field>
-                </div>
-            </>)}
-            {miniPoolMinimumStakeRplAmountsQuery.data
-                && nodeInformationQuery.data
-                && nodeInformationQuery.data.node.ethWalletBalance < 8.1 && (<>
-                <div className="home-row-full" >
-                        <Field
-                            status="warning"
-                            title="Warning"
-                            color="white"
-                        >You currently have less than 8.1 ETH in your wallet. Please add at least 0.1 eth for fees.</Field>
-                </div>
-            </>)}
-            {miniPoolMinimumStakeRplAmountsQuery.data
-                && nodeInformationQuery.data
-                && parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake)
-                && (<>
-                <div className="home-row-full" >
-                    <Field
-                        status="warning"
-                        title="Warning"
-                        color="white"
-                    >You don't have enough RPL tokens to create a minipool of 8 ETH. You are missing {parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake) - parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance)} Staked RPL tokens.</Field>
-                </div>
-            </>)}
-            {miniPoolMinimumStakeRplAmountsQuery.data
-                && nodeInformationQuery.data
-                && parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake)
-                && (<>
-                <div className="home-row-full" >
-                    <Field
-                        status="warning"
-                        title="Warning"
-                        color="white"
-                    >You don't have enough RPL tokens to create a minipool of 16 ETH. You are missing {parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake) - parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance)} Staked RPL tokens.</Field>
-                </div>
-            </>)}
             {nodeInformationQuery.data
                 && miniPoolMinimumStakeRplAmountsQuery.data
-                && nodeInformationQuery.data.node.ethWalletBalance >= 8.1
                 && (<>
                 <div className="card card-default">
+                    {nodeInformationQuery.data.node.ethWalletBalance < 8 && (<>
+                        <div className="home-row-full" >
+                                <Field
+                                    status="danger"
+                                    title="Require"
+                                    color="white"
+                                >You currently have less than 8 ETH in your wallet. Please add more ETH to your wallet before creating new MiniPool</Field>
+                        </div>
+                    </>)}
+                    {nodeInformationQuery.data.node.ethWalletBalance < 8.1 && (<>
+                        <div className="home-row-full" >
+                                <Field
+                                    status="warning"
+                                    title="Warning"
+                                    color="white"
+                                >You currently have less than 8.1 ETH in your wallet. Please add at least 0.1 ETH for fees.</Field>
+                        </div>
+                    </>)}
+                    {parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake) && (<>
+                        <div className="home-row-full" >
+                            <Field
+                                status="warning"
+                                title="Warning"
+                                color="white"
+                            >You don't have enough RPL tokens to create a minipool of 8 ETH. You are missing {parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake) - parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance)} Staked RPL tokens.</Field>
+                        </div>
+                    </>)}
+                    {parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake) && (<>
+                        <div className="home-row-full" >
+                            <Field
+                                status="warning"
+                                title="Warning"
+                                color="white"
+                            >You don't have enough RPL tokens to create a minipool of 16 ETH. You are missing {parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake) - parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance)} Staked RPL tokens.</Field>
+                        </div>
+                    </>)}
                     <div className="home-row-2" >
                         <Btn
                             icon="fe:plus"
@@ -160,7 +149,7 @@ export const NewMiniPool = ({ wallet, status, minipools, backFn }: any) => {
                             onClick={async () => {
                                 await sendCreateMiniPool({ SmallPool: true });
                             }}
-                            disabled={parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake)}
+                            disabled={nodeInformationQuery.data.node.ethWalletBalance < 8 || parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumSmallPoolStake)}
                         >Create 8 ETH MiniPool</Btn>
                         <Btn
                             icon="fe:plus"
@@ -169,7 +158,7 @@ export const NewMiniPool = ({ wallet, status, minipools, backFn }: any) => {
                             onClick={async () => {
                                 await sendCreateMiniPool({ SmallPool: false });
                             }}
-                            disabled={parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake)}
+                            disabled={nodeInformationQuery.data.node.ethWalletBalance < 16 || parseFloat(nodeInformationQuery.data.node.nodeRPLStakedBalance) < parseFloat(miniPoolMinimumStakeRplAmountsQuery.data.minimumMiniPoolStake)}
                         >Create 16 ETH MiniPool</Btn>
                     </div>
                 </div>

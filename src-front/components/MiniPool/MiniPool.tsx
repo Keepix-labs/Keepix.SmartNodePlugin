@@ -65,36 +65,23 @@ export const MiniPool = ({ index, total, pool, wallet }: any) => {
                 icon="formkit:ethereum"
             >{ pool['Your-portion'] }</Field>
             </div>
-            {/* <div className="home-row-2" >
-            <Field icon="uil:chart" status="gray-black" color="white">
-                Metrics:
-            </Field>
-            <Field
-                status="gray" color="white"
-                title="Block"
-                icon="clarity:block-line"
-            >1,511,511</Field>
-            </div> */}
-            <div className="home-row-full" >
-                <Btn
-                    status="gray"
-                    icon="ph:link"
-                    color="white"
-                >MiniPool Link</Btn>
-            </div>
             <div className="home-row-2" >
                 <Btn
                     icon="material-symbols:stop"
                     status="gray-black"
                     color="red"
                     onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/minipool-exit`) }}
-                    >Exit (Exit staking minipools from the beacon chain)</Btn>
+                    >Exit</Btn>
                 <Btn
                     icon="material-symbols:close"
                     status="gray-black"
                     color="orange"
                     onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/minipool-close`) }}
-                >Close (Withdraw any remaining balance from a minipool and close it)</Btn>
+                >Close</Btn>
+            </div>
+            <div className="home-row-2" style={{ textAlign: "center" }} >
+                <div>(Exit staking minipools from the beacon chain)</div>
+                <div>(Withdraw any remaining balance from a minipool and close it)</div>
             </div>
         </div>
     </>);
