@@ -112,5 +112,67 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine($"You successfully staked {poolSize} ETH on the Ethereum network, congratulations!");
             return true;
         }
+
+        [KeepixPluginFn("exit-minipool")]
+        public static async Task<bool> OnExitPool(ExitPoolInput input)
+        {
+            stateManager = PluginStateManager.GetStateManager();
+            bool isRegistered = false;
+            bool isAlive = SetupService.IsNodeRunning();
+            bool isSync = StateService.IsNodeSynced();
+            
+            try { isRegistered = stateManager.DB.Retrieve<bool>("REGISTERED"); } catch (Exception) {}
+            if (!isRegistered) {
+                Console.WriteLine("Please first register your node on the network.");
+                return false;
+            }
+            if (!isAlive) {
+                Console.WriteLine("Please start the node before trying to exit minipool");
+                return false;
+            }
+            if (!isSync) {
+                Console.WriteLine("Your ETH node is not synced yet on the network, please try later.");
+                return false;
+            }
+            string error = PoolService.ExitMiniPool(input.MiniPoolAddress);
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine($"An error occured while trying to exit minipool \"{input.MiniPoolAddress}\": {error}");
+                return false;
+            }
+
+            Console.WriteLine($"You successfully exited minipool {input.MiniPoolAddress}");
+            return true;
+        }
+
+        [KeepixPluginFn("close-minipool")]
+        public static async Task<bool> OnClosePool(ClosePoolInput input)
+        {
+            stateManager = PluginStateManager.GetStateManager();
+            bool isRegistered = false;
+            bool isAlive = SetupService.IsNodeRunning();
+            bool isSync = StateService.IsNodeSynced();
+            
+            try { isRegistered = stateManager.DB.Retrieve<bool>("REGISTERED"); } catch (Exception) {}
+            if (!isRegistered) {
+                Console.WriteLine("Please first register your node on the network.");
+                return false;
+            }
+            if (!isAlive) {
+                Console.WriteLine("Please start the node before trying to close minipool");
+                return false;
+            }
+            if (!isSync) {
+                Console.WriteLine("Your ETH node is not synced yet on the network, please try later.");
+                return false;
+            }
+            string error = PoolService.CloseMiniPool(input.MiniPoolAddress);
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine($"An error occured while trying to close minipool \"{input.MiniPoolAddress}\": {error}");
+                return false;
+            }
+
+            Console.WriteLine($"You successfully closed minipool {input.MiniPoolAddress}");
+            return true;
+        }
     }
 }

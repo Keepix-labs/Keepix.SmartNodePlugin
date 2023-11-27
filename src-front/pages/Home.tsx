@@ -77,20 +77,47 @@ export default function HomePage() {
           let splitInformations = strRocketPoolMiniPools.pools.split("\n\n").slice(0, -2);
 
           if (splitInformations.length >= 1) {
-            let numberOfPools = parseInt(splitInformations[0]);
-            for (let i = 2; i < (2 + numberOfPools); i++) {
-              if (splitInformations.length >= i) {
-                const poolInfos = splitInformations[i];
-                const poolData = poolInfos.split("\n").reduce((acc: any, x: any) => {
-                  const line = x.split(":", 2);
-                  if (line.length == 2) {
-                    acc[line[0].trim().replace(/ /gm, '-')] = line[1].trim();
+              let nextsIsFinalizedMiniPools = false;
+              let nextsIsPrelaunchMiniPools = false;
+              // let numberOfPools = parseInt(splitInformations[0]);
+              for (let i = 0; i < splitInformations.length; i++) {
+
+                if (splitInformations[i].includes("finalized minipool")) {
+                  if (splitInformations[i + 1] !== undefined && splitInformations[i + 2] !== undefined) {
+                    nextsIsFinalizedMiniPools = true;
+                    nextsIsPrelaunchMiniPools = false;
+                    let numberOfPools = parseInt(splitInformations[i]);
+                    i++;
+                    continue ;
                   }
-                  return acc;
-                }, {});
-                pools.push(poolData);
+                }
+
+                if (splitInformations[i].includes("Prelaunch minipool")) {
+                  if (splitInformations[i + 1] !== undefined && splitInformations[i + 2] !== undefined) {
+                    nextsIsFinalizedMiniPools = false;
+                    nextsIsPrelaunchMiniPools = true;
+                    let numberOfPools = parseInt(splitInformations[i]);
+                    i++;
+                    continue ;
+                  }
+                }
+
+                if (splitInformations[i].trim() !== '') {
+                  const poolInfos = splitInformations[i];
+                  const poolData = poolInfos.split("\n").reduce((acc: any, x: any) => {
+                    const line = x.split(":", 2);
+                    if (line.length == 2) {
+                      acc[line[0].trim().replace(/ /gm, '-')] = line[1].trim();
+                    }
+                    return acc;
+                  }, {});
+                  pools.push({
+                    ... poolData,
+                    Finalized: nextsIsFinalizedMiniPools ? true : false,
+                    Prelaunch: nextsIsPrelaunchMiniPools ? true : false
+                  });
+                }
               }
-            }
           }
         }
       } catch (e) {
@@ -221,17 +248,6 @@ export default function HomePage() {
               >Register My Node to RocketPool</Btn>
         </BigLoader>
       </>)}
-
-      {/* Pool Creation */}
-      {statusQuery?.data && syncProgressQuery?.data
-        && syncProgressQuery?.data?.IsSynced === true
-        && statusQuery.data?.NodeState === 'NODE_RUNNING'
-        && walletQuery.data?.Wallet !== undefined
-        && statusQuery.data?.IsRegistered === true
-        && miniPoolsQuery?.data
-        && miniPoolsQuery?.data?.length === 0 && (<>
-        sss sss
-      </>)}
       
       {/* Has one or more Pool */}
       {!newMiniPoolDisplay
@@ -243,38 +259,48 @@ export default function HomePage() {
         && walletQuery.data?.Wallet !== undefined
         && statusQuery.data?.IsRegistered === true
         && miniPoolsQuery?.data
-        && miniPoolsQuery?.data?.length > 0 && (<>
+        && miniPoolsQuery?.data?.length >= 0 && (<>
         <Node wallet={walletQuery.data?.Wallet} minipools={miniPoolsQuery?.data ?? []} status={statusQuery?.data} ></Node>
-        <div className="home-row-3" >
-          <div></div>
-          <Btn
-            icon="material-symbols:lock"
-            status="gray-black"
-            color="white"
-            onClick={async () => { setStakeRplDisplay(true); }}
-          >Manage RPL Staking</Btn>
-          <div></div>
-        </div>
-        <div className="home-row-3" >
-          <div></div>
-          <Btn
-            icon="system-uicons:grid-small"
-            status="gray-black"
-            color="white"
-            onClick={async () => { setManageMiniPoolsDisplay(true); }}
-            disabled={miniPoolsQuery?.data?.length === 0}
-          >Manage My MiniPools ({miniPoolsQuery?.data?.length})</Btn>
-          <div></div>
-        </div>
-        <div className="home-row-3" >
-          <div></div>
-          <Btn
-            icon="fe:plus"
-            status="gray-black"
-            color="white"
-            onClick={async () => { setNewMiniPoolDisplay(true); }}
-          >Create One New MiniPool</Btn>
-          <div></div>
+        <div className="card card-default">
+          <header className="AppBase-header">
+              <div className="AppBase-headerIcon icon-app">
+              <Icon icon="ion:rocket" />
+              </div>
+              <div className="AppBase-headerContent">
+              <h1 className="AppBase-headerTitle">Actions</h1>
+              </div>
+          </header>
+          <div className="home-row-3" >
+            <div></div>
+            <Btn
+              icon="material-symbols:lock"
+              status="gray-black"
+              color="white"
+              onClick={async () => { setStakeRplDisplay(true); }}
+            >Manage RPL Staking</Btn>
+            <div></div>
+          </div>
+          <div className="home-row-3" >
+            <div></div>
+            <Btn
+              icon="system-uicons:grid-small"
+              status="gray-black"
+              color="white"
+              onClick={async () => { setManageMiniPoolsDisplay(true); }}
+              disabled={miniPoolsQuery?.data?.length === 0}
+            >Manage My MiniPools ({miniPoolsQuery?.data?.length})</Btn>
+            <div></div>
+          </div>
+          <div className="home-row-3" >
+            <div></div>
+            <Btn
+              icon="fe:plus"
+              status="gray-black"
+              color="white"
+              onClick={async () => { setNewMiniPoolDisplay(true); }}
+            >Create One New MiniPool</Btn>
+            <div></div>
+          </div>
         </div>
       </>)}
 

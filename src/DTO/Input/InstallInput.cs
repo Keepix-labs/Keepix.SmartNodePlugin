@@ -10,6 +10,7 @@ namespace Keepix.SmartNodePlugin.DTO.Input
     {
         public string? WalletMnemonic { get; set; }
         public bool? AutoStart { get; set;}
+        public bool? UseDefaultClient { get; set;}
         public bool EnableMEV { get;set; }
         public bool Mainnet { get; set; }
     }

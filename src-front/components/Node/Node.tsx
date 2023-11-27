@@ -13,14 +13,22 @@ import Logo from "../Logo/Logo";
 
 export const Node = ({ node, wallet, status, minipools }: any) => {
 
-    // const web3 = new Web3();
-
     const nodeInformationQuery = useQuery({
         queryKey: ["getNodeInformation"],
         queryFn: getPluginNodeInformation,
         refetchInterval: 10000,
         enabled: status?.NodeState === 'NODE_RUNNING'
       });
+
+    const lastBlockNumberQuery = useQuery({
+        queryKey: ["getLatestBlockNumber"],
+        queryFn: async () => {
+            const web3 = new Web3(nodeInformationQuery.data.node.rpcUrl);
+            const latest = await web3.eth.getBlockNumber();
+            return latest.toString();
+        },
+        enabled: nodeInformationQuery?.data?.node.rpcUrl !== undefined
+    });
 
     return (<>
         <div className="card card-default">
@@ -47,6 +55,7 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     title="Wallet Address"
                     icon="ion:wallet"
                     color="white"
+                    userSelect="text"
                 >{ wallet }</Field>
             </div>
             <div className="home-row-full" >
@@ -57,6 +66,7 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                         title="Wallet ETH Balance"
                         icon="mdi:ethereum"
                         color="white"
+                        userSelect="text"
                     >{ nodeInformationQuery.data.node.ethWalletBalance } ETH</Field>
                 )}
             </div>
@@ -68,6 +78,7 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                         title="Wallet RPL Balance"
                         icon="ion:rocket"
                         color="white"
+                        userSelect="text"
                     >{ nodeInformationQuery.data.node.rplWalletBalance } RPL</Field>
                 )}
             </div>
@@ -77,28 +88,39 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                         title="Total Borrowed"
                         icon="ri:parent-line"
                         color="white"
-                    >{ minipools.reduce((acc: any, x: any) => acc + (parseFloat(x['Beacon-balance-(CL)']) - parseFloat(x['Your-portion'])), 0) } ETH</Field>
+                        userSelect="text"
+                    >{ minipools.reduce((acc: any, x: any) => acc + (parseFloat(x['RP-deposit'])), 0) } ETH</Field>
             </div>
             <div className="home-row-full">
                 <Field
                         status="gray-black"
-                        title="Total ETH Working"
+                        title="Total ETH Staked"
                         icon="ri:parent-line"
                         color="white"
-                    >{ minipools.reduce((acc: any, x: any) => acc + parseFloat(x['Your-portion']), 0) } ETH</Field>
+                        userSelect="text"
+                    >{ minipools.reduce((acc: any, x: any) => acc + parseFloat(x['Node-deposit']), 0) } ETH</Field>
             </div>
-            {/* Unused */}
-            {/* <div className="home-row-full" >
-                {!nodeInformationQuery.data && (<Loader></Loader>)}
-                {nodeInformationQuery.data && (
+            <div className="home-row-full">
+                <Field
+                        status="gray-black"
+                        title="APY Estimation"
+                        icon="material-symbols-light:rewarded-ads-sharp"
+                        color="white"
+                        userSelect="text"
+                    >... %</Field>
+            </div>
+            <div className="home-row-full">
                     <Field
                         status="gray-black"
-                        title="Node ETH Balance"
-                        icon="ion:rocket"
+                        title="Latest Block"
+                        icon="clarity:block-line"
                         color="white"
-                    >{ nodeInformationQuery.data.node.nodeCreditBalance } ETH <sup style={{ display: window.innerWidth < 500 ? 'none' : '', marginLeft: "10px", top: "0px", position: "absolute"}}>(which can be used to make new minipools)</sup></Field>
-                )}
-            </div> */}
+                        userSelect="text"
+                    >
+                        {!lastBlockNumberQuery.data && (<Icon icon="svg-spinners:180-ring-with-bg" />)}
+                        {lastBlockNumberQuery.data && (lastBlockNumberQuery.data)}
+                    </Field>
+            </div>
             <div className="home-row-full" >
                 {!nodeInformationQuery.data && (<Loader></Loader>)}
                 {nodeInformationQuery.data && (<Field
@@ -106,10 +128,11 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     status="info"
                     title="Your Own RPC URL"
                     color="white"
-                    userSelect="text"
+                    href={nodeInformationQuery.data.node.rpcUrl}
+                    target="_blank"
                 >{nodeInformationQuery.data.node.rpcUrl}</Field>)}
             </div>
-            <div className="home-row-2" >
+            <div className="home-row-full" >
                 {
                     (status?.NodeState !== 'NODE_STOPPED' && status?.NodeState !== 'NO_STATE') ?
                     <Btn
@@ -125,12 +148,6 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/start`) }}
                     >Start</Btn>
                 }
-                <Btn
-                    icon="mdi:restart"
-                    status="gray-black"
-                    color="orange"
-                    onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/restart`) }}
-                >Restart</Btn>
             </div>
             {/* <div className="card card-default">
                 {!nodeInformationQuery.data && (<Loader></Loader>)}

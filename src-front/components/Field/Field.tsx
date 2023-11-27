@@ -7,6 +7,7 @@ type Status = "info" | "success" | "warning" | "danger" | "gray" | "gray-black";
 
 type PropsBtn = {
   href?: string;
+  target?: string;
   title?: string;
   icon?: string;
   status?: Status;
@@ -18,6 +19,7 @@ type PropsBtn = {
 
 export default function Field({
   href,
+  target,
   icon,
   title,
   children,
@@ -28,9 +30,10 @@ export default function Field({
 }: PropsBtn) {
   const Content = (
     <>
-      {icon && <Icon icon={icon} />}
+      {icon && !icon.startsWith("http") && <Icon icon={icon} />}
+      {icon && icon.startsWith("http") && <img src={icon} width="16px" />}
       {title && <h4>{title}:</h4>}
-      <span>{children}</span>
+      <span>{href ? <><a href={href} target={target}>{children}</a></> : children}</span>
     </>
   );
 

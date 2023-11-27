@@ -122,14 +122,12 @@ namespace Keepix.SmartNodePlugin.Services
 
                 var network = installInput.Mainnet ? "mainnet" : "holesky";
 
-                //nethermind besu
-                // var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                // " --executionClient nethermind --consensusClient nimbus --nimbus-additionalBnFlags '--web3-url=http://127.0.0.1:8551' --nethermind-containerTag nethermind/nethermind:latest --executionCommon-openRpcPorts external";
-
-                // besu + lodestar
-                var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 " + 
-                " --executionClient besu --consensusClient lodestar --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external --besu-additionalFlags --rpc-http-cors-origins=all";
-
+                var cli = $"~/bin/rocketpool --allow-root service config --smartnode-network {network} --smartnode-projectName keepix --smartnode-priorityFee 2 ";
+                if (installInput.UseDefaultClient == null || installInput.UseDefaultClient == true) { //nethermind besu
+                    cli += " --executionClient nethermind --consensusClient nimbus --nimbus-additionalBnFlags '--web3-url=http://127.0.0.1:8551' --nethermind-containerTag nethermind/nethermind:latest --executionCommon-openRpcPorts external";
+                } else { // besu + lodestar
+                    cli += " --executionClient besu --consensusClient lodestar --nethermind-containerTag hyperledger/besu:latest --executionCommon-openRpcPorts external --besu-additionalFlags --rpc-http-cors-origins=all";
+                }
                 if (network == "mainnet")
                 {
                     // add syncpoint url if we are on main net

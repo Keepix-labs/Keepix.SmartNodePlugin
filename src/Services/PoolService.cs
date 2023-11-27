@@ -71,5 +71,33 @@ namespace Keepix.SmartNodePlugin.Services
 
             return result;
         }
+
+        public static string ExitMiniPool(string MiniPoolAddress)
+        {
+            string result = Shell.ExecuteCommand($"~/bin/rocketpool --allow-root minipool exit --minipool {MiniPoolAddress} --yes");
+
+            if (result.Contains("No minipools can be exited")) {
+                return $"The minipool cannot be exited at this time. Please try again later.";
+            }
+            // TODO check the real return.
+            if (result.Contains("Your minipool is now in Initialized status")) {
+                return string.Empty;
+            }
+            return result;
+        }
+
+        public static string CloseMiniPool(string MiniPoolAddress)
+        {
+            string result = Shell.ExecuteCommand($"~/bin/rocketpool --allow-root minipool close --minipool {MiniPoolAddress}");
+
+            if (result.Contains("No minipools can be closed")) {
+                return $"The minipool cannot be closed at this time. Please try again later.";
+            }
+            // TODO check the real return.
+            if (result.Contains("Your minipool is now in Initialized status")) {
+                return string.Empty;
+            }
+            return result;
+        }
     }
 }
