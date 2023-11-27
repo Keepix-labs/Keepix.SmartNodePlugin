@@ -4,8 +4,35 @@ import Btn from "../Btn/Btn";
 import Field from "../Field/Field";
 import { safeFetch } from "../../lib/utils";
 import { KEEPIX_API_URL, PLUGIN_API_SUBPATH } from "../../constants";
+import { useState } from "react";
+import Popin from "../Popin/Popin";
+import Loader from "../Loader/Loader";
+import BannerAlert from "../BannerAlert/BannerAlert";
+import { postPluginMiniPoolClose, postPluginMiniPoolExit } from "../../queries/api";
 
 export const MiniPool = ({ index, total, pool, wallet }: any) => {
+    const [open, setPopinOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [postResult, setPostResult] = useState<any>(undefined);
+
+    const sendExitMiniPool = async (body: any) => {
+        setPopinOpen(true);
+        setLoading(true);
+        setPostResult(undefined);
+        const result = await postPluginMiniPoolExit(body);
+        setLoading(false);
+        setPostResult(result);
+    };
+
+    const sendCloseMiniPool = async (body: any) => {
+        setPopinOpen(true);
+        setLoading(true);
+        setPostResult(undefined);
+        const result = await postPluginMiniPoolClose(body);
+        setLoading(false);
+        setPostResult(result);
+    };
+
     return (<>
         <div className="card card-default">
             <header className="AppBase-header">
@@ -70,13 +97,13 @@ export const MiniPool = ({ index, total, pool, wallet }: any) => {
                     icon="material-symbols:stop"
                     status="gray-black"
                     color="red"
-                    onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/minipool-exit`) }}
+                    onClick={async () => { await sendExitMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                     >Exit</Btn>
                 <Btn
                     icon="material-symbols:close"
                     status="gray-black"
                     color="orange"
-                    onClick={async () => { await safeFetch(`${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/minipool-close`) }}
+                    onClick={async () => { await sendCloseMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                 >Close</Btn>
             </div>
             <div className="home-row-2" style={{ textAlign: "center" }} >
@@ -84,5 +111,21 @@ export const MiniPool = ({ index, total, pool, wallet }: any) => {
                 <div>(Withdraw any remaining balance from a minipool and close it)</div>
             </div>
         </div>
+        {open && (
+        <>
+          <Popin
+            title="MiniPool Task"
+            close={() => {
+              setPopinOpen(false);
+            }}
+          >
+            {loading === true && (
+                <Loader></Loader>
+            )}
+            {postResult !== undefined && postResult.result !== true && (<BannerAlert status="danger">Task failed. StackTrace: {postResult.stdOut}</BannerAlert>)}
+            {postResult !== undefined && postResult.result === true && (<BannerAlert status="success">Task Done With Success</BannerAlert>)}
+          </Popin>
+        </>
+      )}
     </>);
 }

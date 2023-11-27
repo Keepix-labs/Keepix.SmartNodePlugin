@@ -82,7 +82,8 @@ export default function HomePage() {
               // let numberOfPools = parseInt(splitInformations[0]);
               for (let i = 0; i < splitInformations.length; i++) {
 
-                if (splitInformations[i].includes("finalized minipool")) {
+                if (splitInformations[i].includes("finalized minipool")
+                  || splitInformations[i].includes("Staking minipool")) {
                   if (splitInformations[i + 1] !== undefined && splitInformations[i + 2] !== undefined) {
                     nextsIsFinalizedMiniPools = true;
                     nextsIsPrelaunchMiniPools = false;
@@ -103,6 +104,7 @@ export default function HomePage() {
                 }
 
                 if (splitInformations[i].trim() !== '') {
+                  console.log(splitInformations[i]);
                   const poolInfos = splitInformations[i];
                   const poolData = poolInfos.split("\n").reduce((acc: any, x: any) => {
                     const line = x.split(":", 2);

@@ -175,7 +175,7 @@ export const NewMiniPool = ({ wallet, status, minipools, backFn }: any) => {
             {loading === true && (
                 <Loader></Loader>
             )}
-            {postResult !== undefined && postResult.result === false && (<BannerAlert status="danger">MiniPool Creation failed. StackTrace: {postResult.stdOut}</BannerAlert>)}
+            {postResult !== undefined && postResult.result !== true && (<BannerAlert status="danger">MiniPool Creation failed. StackTrace: {postResult.stdOut}</BannerAlert>)}
             {postResult !== undefined && postResult.result === true && (<BannerAlert status="success">MiniPool Created With Success</BannerAlert>)}
           </Popin>
         </>

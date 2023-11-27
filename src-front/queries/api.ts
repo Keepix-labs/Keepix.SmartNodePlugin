@@ -50,6 +50,24 @@ export const postPluginCreateMiniPool = async (body: any) =>
     parser: (data: any) => { return { result: JSON.parse(data.result), stdOut: data.stdOut }; } 
   });
 
+export const postPluginMiniPoolExit = async (body: any) => 
+  request<any>({
+    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/exit-minipool`,
+    method: 'POST',
+    name: "postPluginMiniPoolExit",
+    body: body,
+    parser: (data: any) => { return { result: JSON.parse(data.result), stdOut: data.stdOut }; } 
+  });
+
+export const postPluginMiniPoolClose = async (body: any) => 
+  request<any>({
+    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/close-minipool`,
+    method: 'POST',
+    name: "postPluginMiniPoolClose",
+    body: body,
+    parser: (data: any) => { return { result: JSON.parse(data.result), stdOut: data.stdOut }; } 
+  });
+
 export const postPluginStakeRpl = async (amount: any) => 
   request<any>({
     url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/stake-rpl`,
