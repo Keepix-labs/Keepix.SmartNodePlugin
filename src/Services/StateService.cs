@@ -211,6 +211,32 @@ namespace Keepix.SmartNodePlugin.Services
             return (minimumSmallPoolStake, minimumMiniPoolStake);
         }
 
+        public static RewardsInformation getRewardsInformations() {
+            string data = Shell.ExecuteCommand(
+                "~/bin/rocketpool --allow-root node rewards", new List<ShellCondition>()
+             {
+                new ShellCondition()
+                {
+                    content = "would you like to claim?",
+                    answers = new string[] {"[STOP_PROCESS]", ""}
+                }
+            });
+
+            string rpl = "0";
+            string eth = "0";
+            Match match = Regex.Match(data, @"Pending Rewards:[\s]+(\d+.\d+)[\s]+RPL[\s]+(\d+.\d+)[\s]+ETH");
+            if (match.Success) {
+                rpl = match.Groups[1].Value;
+                eth = match.Groups[2].Value;
+            }
+            Console.WriteLine("Rewards Claimable: " + rpl + " RPL, " + eth + " ETH");
+
+            return new RewardsInformation() {
+                eth = eth,
+                rpl = rpl
+            };
+        }
+
         public static NodeInformation getNodeInformations() {
             string data = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
             
@@ -290,7 +316,8 @@ namespace Keepix.SmartNodePlugin.Services
                 nodeMinimumRPLStakeNeeded = nodeMinimumRPLStakeNeeded,
                 nodeMaximumRPLStakePossible = nodeMaximumRPLStakePossible,
                 rpcUrl = rpcUrl,
-                ipv4 = localIPv4
+                ipv4 = localIPv4,
+                rewards = getRewardsInformations()
             };
         }
     }

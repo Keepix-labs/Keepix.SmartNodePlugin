@@ -99,5 +99,22 @@ namespace Keepix.SmartNodePlugin.Services
             }
             return result;
         }
+
+        public static string ClaimRewards()
+        {
+            string result = Shell.ExecuteCommand($"~/bin/rocketpool --allow-root node claim-rewards --yes");
+
+            if (result.Contains("Successfully claimed rewards")) {
+                string hash = "";
+                Match match = Regex.Match(result, @"hash ([\d\w]+)");
+                if (match.Success) {
+                    hash = match.Groups[1].Value;
+                    Console.WriteLine("Claim rewards hash: " + hash);
+                    return hash;
+                }
+                return "Successfully claimed rewards - transaction hash not found.";
+            }
+            return result;
+        }
     }
 }

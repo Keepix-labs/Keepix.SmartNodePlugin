@@ -77,27 +77,30 @@ export default function HomePage() {
           let splitInformations = strRocketPoolMiniPools.pools.split("\n\n").slice(0, -2);
 
           if (splitInformations.length >= 1) {
-              let nextsIsFinalizedMiniPools = false;
-              let nextsIsPrelaunchMiniPools = false;
+              let miniPoolStatus = undefined;
               // let numberOfPools = parseInt(splitInformations[0]);
               for (let i = 0; i < splitInformations.length; i++) {
 
-                if (splitInformations[i].includes("finalized minipool")
-                  || splitInformations[i].includes("Staking minipool")) {
+                if (splitInformations[i].toLowerCase().includes("finalized minipool")) {
                   if (splitInformations[i + 1] !== undefined && splitInformations[i + 2] !== undefined) {
-                    nextsIsFinalizedMiniPools = true;
-                    nextsIsPrelaunchMiniPools = false;
-                    let numberOfPools = parseInt(splitInformations[i]);
+                    miniPoolStatus = "Finalized";
+                    // let numberOfPools = parseInt(splitInformations[i]);
                     i++;
                     continue ;
                   }
                 }
-
+                if (splitInformations[i].includes("Staking minipool")) {
+                  if (splitInformations[i + 1] !== undefined && splitInformations[i + 2] !== undefined) {
+                    miniPoolStatus = "Staking";
+                    // let numberOfPools = parseInt(splitInformations[i]);
+                    i++;
+                    continue ;
+                  }
+                }
                 if (splitInformations[i].includes("Prelaunch minipool")) {
                   if (splitInformations[i + 1] !== undefined && splitInformations[i + 2] !== undefined) {
-                    nextsIsFinalizedMiniPools = false;
-                    nextsIsPrelaunchMiniPools = true;
-                    let numberOfPools = parseInt(splitInformations[i]);
+                    miniPoolStatus = "Prelaunch";
+                    // let numberOfPools = parseInt(splitInformations[i]);
                     i++;
                     continue ;
                   }
@@ -115,8 +118,7 @@ export default function HomePage() {
                   }, {});
                   pools.push({
                     ... poolData,
-                    Finalized: nextsIsFinalizedMiniPools ? true : false,
-                    Prelaunch: nextsIsPrelaunchMiniPools ? true : false
+                    Status: miniPoolStatus,
                   });
                 }
               }
@@ -132,13 +134,23 @@ export default function HomePage() {
     enabled: statusQuery.data?.NodeState === 'NODE_RUNNING' && statusQuery.data?.IsRegistered === true && syncProgressQuery?.data?.IsSynced === true
   });
 
-  //syncProgressQuery?.data?.IsSynced === true
-
   return (
     <div className="AppBase-content">
       {(!statusQuery?.data || loading) && (
         <BigLoader title="" full={true}></BigLoader>
       )}
+
+      {/* Loading minipool query */}
+      {!newMiniPoolDisplay
+        && !stakeRplDisplay
+        && !manageMiniPoolsDisplay
+        && statusQuery?.data && syncProgressQuery?.data
+        && syncProgressQuery?.data?.IsSynced === true
+        && statusQuery.data?.NodeState === 'NODE_RUNNING'
+        && walletQuery.data?.Wallet !== undefined
+        && statusQuery.data?.IsRegistered === true
+        && !miniPoolsQuery?.data && (<BigLoader title="" label="Connecting" full={true}></BigLoader>)}
+
       {statusQuery?.data && statusQuery.data?.NodeState === 'NO_STATE' && (
         <BannerAlert status="danger">Error with the Plugin "{statusQuery.data?.NodeState}" please Reinstall.</BannerAlert>
       )}

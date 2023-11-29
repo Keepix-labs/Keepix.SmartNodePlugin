@@ -19,5 +19,6 @@ namespace Keepix.SmartNodePlugin
         public string nodeMaximumRPLStakePossible { get;set; }
         public string rpcUrl { get;set; }
         public string ipv4 { get;set; }
+        public RewardsInformation rewards { get;set; }
     }
 }

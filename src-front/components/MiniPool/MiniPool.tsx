@@ -76,33 +76,40 @@ export const MiniPool = ({ index, total, pool, wallet }: any) => {
                 status="success"
                 title="Minipool Status"
                 icon="material-symbols:work"
-            >{ pool['Prelaunch'] ? 'Prelaunch (Your 8 or 16 ETH deposit will be transferred to be Beacon Chain in 12 hours)' : 'Running' }</Field>
+            >
+                { pool['Status'] }
+                { pool['Status'] == 'Prelaunch' ? 'Prelaunch (Your 8 or 16 ETH deposit will be transferred to be Beacon Chain in 12 hours)' : '' }
+                { pool['Validator-active'] == 'no' ? ' (Pending)' : ''}
+                { pool['Validator-active'] == 'yes' ? ' (Active)' : ''}
+            </Field>
             </div>
             <div className="home-row-full" >
             <Field
                 status="gray-black" color="white"
-                title="Refund"
+                title="Node Deposit"
                 icon="formkit:ethereum"
-            >{ pool['Available-refund'] }</Field>
+            >{ pool['Node-deposit'] }</Field>
             </div>
             <div className="home-row-full" >
             <Field
                 status="gray-black" color="white"
-                title="Portion"
+                title="Rocket Pool Deposit"
                 icon="formkit:ethereum"
-            >{ pool['Your-portion'] }</Field>
+            >{ pool['RP-deposit'] }</Field>
             </div>
             <div className="home-row-2" >
                 <Btn
                     icon="material-symbols:stop"
                     status="gray-black"
                     color="red"
+                    disabled={pool['Status'] !== 'Finalized'}
                     onClick={async () => { await sendExitMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                     >Exit</Btn>
                 <Btn
                     icon="material-symbols:close"
                     status="gray-black"
                     color="orange"
+                    disabled={pool['Status'] !== 'Finalized'}
                     onClick={async () => { await sendCloseMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                 >Close</Btn>
             </div>
