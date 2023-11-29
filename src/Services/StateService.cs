@@ -213,7 +213,7 @@ namespace Keepix.SmartNodePlugin.Services
 
         public static RewardsInformation getRewardsInformations() {
             string data = Shell.ExecuteCommand(
-                "~/bin/rocketpool --allow-root node rewards", new List<ShellCondition>()
+                "~/bin/rocketpool --allow-root node claim-rewards", new List<ShellCondition>()
              {
                 new ShellCondition()
                 {
