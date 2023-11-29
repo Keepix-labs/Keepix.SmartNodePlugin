@@ -107,7 +107,6 @@ export default function HomePage() {
                 }
 
                 if (splitInformations[i].trim() !== '') {
-                  console.log(splitInformations[i]);
                   const poolInfos = splitInformations[i];
                   const poolData = poolInfos.split("\n").reduce((acc: any, x: any) => {
                     const line = x.split(":", 2);
@@ -116,10 +115,12 @@ export default function HomePage() {
                     }
                     return acc;
                   }, {});
-                  pools.push({
-                    ... poolData,
-                    Status: miniPoolStatus,
-                  });
+                  if (Object.keys(poolData).length !== 0) {
+                    pools.push({
+                      ... poolData,
+                      Status: miniPoolStatus,
+                    });
+                  }
                 }
               }
           }
