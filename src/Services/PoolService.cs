@@ -109,10 +109,10 @@ namespace Keepix.SmartNodePlugin.Services
                 Match match = Regex.Match(result, @"hash ([\d\w]+)");
                 if (match.Success) {
                     hash = match.Groups[1].Value;
-                    Console.WriteLine("Claim rewards hash: " + hash);
-                    return hash;
+                    Console.WriteLine(hash);
+                    return string.Empty;
                 }
-                return "Successfully claimed rewards - transaction hash not found.";
+                return "Successfully claimed rewards - ... but transaction hash not found. ErrorTrace: " + result;
             }
             return result;
         }

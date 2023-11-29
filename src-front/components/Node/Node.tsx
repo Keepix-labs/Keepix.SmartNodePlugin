@@ -100,7 +100,8 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                         userSelect="text"
                     >{ minipools.reduce((acc: any, x: any) => acc + parseFloat(x['Node-deposit']), 0) } ETH</Field>
             </div>
-            <div className="home-row-full">
+            {/* TODO in another version */}
+            {/* <div className="home-row-full">
                 <Field
                         status="gray-black"
                         title="APY Estimation"
@@ -108,6 +109,15 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                         color="white"
                         userSelect="text"
                     >... %</Field>
+            </div> */}
+            <div className="home-row-full">
+                {!nodeInformationQuery.data && (<Loader></Loader>)}
+                {nodeInformationQuery.data && (<Field
+                    icon="material-symbols-light:rewarded-ads-sharp"
+                    status="info"
+                    title="Available Rewards"
+                    color="white"
+                >{nodeInformationQuery.data.node.rewards?.eth ?? "0"} ETH | {nodeInformationQuery.data.node.rewards?.rpl ?? "0"} RPL</Field>)}
             </div>
             <div className="home-row-full">
                     <Field

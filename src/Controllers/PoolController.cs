@@ -174,5 +174,34 @@ namespace Keepix.SmartNodePlugin.Controllers
             Console.WriteLine($"You successfully closed minipool {input.MiniPoolAddress}");
             return true;
         }
+
+        [KeepixPluginFn("claim-rewards")]
+        public static async Task<bool> OnClaimRewards()
+        {
+            stateManager = PluginStateManager.GetStateManager();
+            bool isRegistered = false;
+            bool isAlive = SetupService.IsNodeRunning();
+            bool isSync = StateService.IsNodeSynced();
+            
+            try { isRegistered = stateManager.DB.Retrieve<bool>("REGISTERED"); } catch (Exception) {}
+            if (!isRegistered) {
+                Console.WriteLine("Please first register your node on the network.");
+                return false;
+            }
+            if (!isAlive) {
+                Console.WriteLine("Please start the node before trying to claim rewards");
+                return false;
+            }
+            if (!isSync) {
+                Console.WriteLine("Your ETH node is not synced yet on the network, please try later.");
+                return false;
+            }
+            string error = PoolService.ClaimRewards();
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine($"An error occured while trying to claim rewards: {error}");
+                return false;
+            }
+            return true;
+        }
     }
 }
