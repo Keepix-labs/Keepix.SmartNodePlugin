@@ -6,12 +6,18 @@ import { KEEPIX_API_URL, PLUGIN_API_SUBPATH } from "../../constants";
 import { safeFetch } from "../../lib/utils";
 import Web3 from "web3";
 import { useQuery } from "@tanstack/react-query";
-import { getPluginNodeInformation } from "../../queries/api";
+import { getPluginNodeInformation, postPluginClaimRewards } from "../../queries/api";
 import BigLoader from "../BigLoader/BigLoader";
 import Loader from "../Loader/Loader";
 import Logo from "../Logo/Logo";
+import { useState } from "react";
+import BannerAlert from "../BannerAlert/BannerAlert";
+import Popin from "../Popin/Popin";
 
 export const Node = ({ node, wallet, status, minipools }: any) => {
+    const [open, setPopinOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [postResult, setPostResult] = useState<any>(undefined);
 
     const nodeInformationQuery = useQuery({
         queryKey: ["getNodeInformation"],
@@ -29,6 +35,15 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
         },
         enabled: nodeInformationQuery?.data?.node.rpcUrl !== undefined
     });
+
+    const sendClaimRewards = async () => {
+        setPopinOpen(true);
+        setLoading(true);
+        setPostResult(undefined);
+        const result = await postPluginClaimRewards();
+        setLoading(false);
+        setPostResult(result);
+    };
 
     return (<>
         <div className="card card-default">
@@ -114,10 +129,10 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                 {!nodeInformationQuery.data && (<Loader></Loader>)}
                 {nodeInformationQuery.data && (<Field
                     icon="material-symbols-light:rewarded-ads-sharp"
-                    status="info"
+                    status="gray-black"
+                    color="yellow"
                     title="Available Rewards"
-                    color="white"
-                >{nodeInformationQuery.data.node.rewards?.eth ?? "0"} ETH | {nodeInformationQuery.data.node.rewards?.rpl ?? "0"} RPL</Field>)}
+                >{nodeInformationQuery.data?.node?.rewards?.eth ?? "0"} ETH + {nodeInformationQuery.data?.node?.rewards?.rpl ?? "0"} RPL</Field>)}
             </div>
             <div className="home-row-full">
                     <Field
@@ -143,6 +158,15 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                 >{nodeInformationQuery.data.node.rpcUrl}</Field>)}
             </div>
             <div className="home-row-full" >
+                <Btn
+                    icon="material-symbols-light:rewarded-ads-sharp"
+                    status="gray-black"
+                    color="yellow"
+                    disabled={!nodeInformationQuery.data?.node || parseFloat(nodeInformationQuery.data.node.rewards.eth) === 0 && parseFloat(nodeInformationQuery.data.node.rewards.rpl) === 0 }
+                    onClick={async () => { await sendClaimRewards(); }}
+                    >Claim Rewards ({nodeInformationQuery.data?.node?.rewards?.eth ?? "0"} ETH + {nodeInformationQuery.data?.node?.rewards?.rpl ?? "0"} RPL)</Btn>
+            </div>
+            <div className="home-row-full" >
                 {
                     (status?.NodeState !== 'NODE_STOPPED' && status?.NodeState !== 'NO_STATE') ?
                     <Btn
@@ -159,57 +183,22 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     >Start</Btn>
                 }
             </div>
-            {/* <div className="card card-default">
-                {!nodeInformationQuery.data && (<Loader></Loader>)}
-                {nodeInformationQuery.data && (<>
-                    <div className="home-row-full" >
-                        <Field
-                            status="gray"
-                            title="RPL Staked"
-                            icon="ion:rocket"
-                            color="white"
-                        >{ nodeInformationQuery.data.node.nodeRPLStakedBalance }</Field>
-                    </div>
-                    <div className="home-row-full" >
-                        <Field
-                            status="gray"
-                            title="Effective RPL Staked"
-                            icon="ion:rocket"
-                            color="white"
-                        >{ nodeInformationQuery.data.node.nodeRPLStakedEffectiveBalance }</Field>
-                    </div>
-                    <div className="home-row-full" >
-                        <Field
-                            status="gray"
-                            title="RPL Staked Percentage of Borrowed ETH"
-                            icon="ion:rocket"
-                            color="white"
-                        >{ nodeInformationQuery.data.node.nodeRPLStakedBorrowedETHPercentage } %</Field>
-                    </div>
-                    <div className="home-row-full" >
-                        <Field
-                            status="gray"
-                            title="RPL Staked Percentage of Bonded ETH"
-                            icon="ion:rocket"
-                            color="white"
-                        >{ nodeInformationQuery.data.node.nodeRPLStakedBondedETHPercentage } %</Field>
-                    </div>
-                    <div className="home-row-2" >
-                        <Field
-                            status="gray"
-                            title="Minimum RPL Needed"
-                            icon="ion:rocket"
-                            color="white"
-                        >{ nodeInformationQuery.data.node.nodeMinimumRPLStakeNeeded } RPL</Field>
-                        <Field
-                            status="gray"
-                            title="Maximum RPL Stake Possible"
-                            icon="ion:rocket"
-                            color="white"
-                        >{ nodeInformationQuery.data.node.nodeMaximumRPLStakePossible } RPL</Field>
-                    </div>
-                </>)}
-            </div> */}
+            {open && (
+                <>
+                <Popin
+                    title="Claim Rewards"
+                    close={() => {
+                    setPopinOpen(false);
+                    }}
+                >
+                    {loading === true && (
+                        <Loader></Loader>
+                    )}
+                    {postResult !== undefined && postResult.result !== true && (<BannerAlert status="danger">Claim failed. StackTrace: {postResult.stdOut}</BannerAlert>)}
+                    {postResult !== undefined && postResult.result === true && (<BannerAlert status="success">Success - tx hash: {postResult.stdOut}</BannerAlert>)}
+                </Popin>
+                </>
+            )}
         </div>
     </>);
 }

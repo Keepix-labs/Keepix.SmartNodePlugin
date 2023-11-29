@@ -86,6 +86,15 @@ export const postPluginUnStakeRpl = async (amount: any) =>
     parser: (data: any) => { return { result: JSON.parse(data.result), stdOut: data.stdOut }; } 
   });
 
+export const postPluginClaimRewards = async () => 
+  request<any>({
+    url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/claim-rewards`,
+    method: 'POST',
+    name: "postPluginClaimRewards",
+    body: {},
+    parser: (data: any) => { return { result: JSON.parse(data.result), stdOut: data.stdOut }; } 
+  });
+
 export const getMinipoolMinimumStakeRplAmounts = async () => 
   request<any>({
     url: `${KEEPIX_API_URL}${PLUGIN_API_SUBPATH}/fetch-minimum-pool-stake-rpl-amounts`,
