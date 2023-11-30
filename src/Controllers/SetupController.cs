@@ -309,7 +309,7 @@ namespace Keepix.SmartNodePlugin.Controllers
         }
 
         [KeepixPluginFn("register-node")]
-        public static async Task<bool> OnRegisterNode()
+        public static async Task<bool> OnRegisterNode() // Register node and join smoothing
         {
             var isDockerRunning = SetupService.isDockerRunning();
             if (!isDockerRunning) {
@@ -328,8 +328,13 @@ namespace Keepix.SmartNodePlugin.Controllers
                 Console.WriteLine("Some errors occured while trying to register the node on network " + error);
                 return false;
             }
-            Console.WriteLine("Your node has been successfully registered on the network, you can now stake on the RocketPool Protocol.");
             stateManager.DB.Store("REGISTERED", true);
+            error = SetupService.JoinSmoothingPool();
+            if (!string.IsNullOrEmpty(error)) {
+                Console.WriteLine("Some errors occured while trying to Join Smoothing Pool on network " + error);
+                return false;
+            }
+            Console.WriteLine("Your node has been successfully registered on the network, you can now stake on the RocketPool Protocol.");
             return true;
         }
 

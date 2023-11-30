@@ -263,6 +263,11 @@ namespace Keepix.SmartNodePlugin.Services
                 isRegistered = true;
             }
             Console.WriteLine("Node IsRegistered: " + isRegistered);
+
+            bool isSmoothing = false;
+            if (data.Contains("node is currently opted into the Smoothing Pool")) { // already Join
+                isSmoothing = true;
+            }
             
             //The node has a total stake of
             
@@ -309,6 +314,7 @@ namespace Keepix.SmartNodePlugin.Services
                 rplWalletBalance = rplWalletBalance,
                 nodeCreditBalance = nodeCreditBalance,
                 isRegistered = isRegistered,
+                isSmoothing = isSmoothing,
                 nodeRPLStakedBalance = nodeRPLStakedBalance,
                 nodeRPLStakedEffectiveBalance = nodeRPLStakedEffectiveBalance,
                 nodeRPLStakedBorrowedETHPercentage = nodeRPLStakedBorrowedETHPercentage,

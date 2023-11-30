@@ -382,6 +382,42 @@ namespace Keepix.SmartNodePlugin.Services
             return result;
         }
 
+        public static string JoinSmoothingPool()
+        {
+            string nodeStatus = Shell.ExecuteCommand("~/bin/rocketpool --allow-root node status");
+            
+            if (nodeStatus.Contains("node is currently opted into the Smoothing Pool")) { // already Join
+                return string.Empty;
+            }
+            var cli = $"~/bin/rocketpool --allow-root node join-smoothing-pool --yes";
+            var result = Shell.ExecuteCommand(cli, new List<ShellCondition>() {
+                new ShellCondition()
+                {
+                    content = "These prices include a maximum priority fee",
+                    answers = new string[] {""}
+                },
+                new ShellCondition()
+                {
+                    content = "Using a max fee of",
+                    answers = new string[] {"y", ""}
+                }}
+            );
+
+            if (result.Contains("clients not ready")) {
+                return "Your node is not correctly synchronized, please restart, wait or reinstall it";
+            }
+
+            if (result.Contains("not enough to pay for this transaction")) {
+                return "Please send ETH to your wallet to register your node on the network, your balance is not enough to cover the fees.";
+            }
+
+            if (result.Contains("Successfully joined the Smoothing Pool")) {
+                return string.Empty;
+            }
+
+            return result;
+        }
+
         private static string GetContainers(PluginStateManager stateManager)
         {
             string containers = "keepix_exporter keepix_api keepix_validator keepix_eth2 keepix_node keepix_eth1 keepix_watchtower keepix_grafana keepix_prometheus";

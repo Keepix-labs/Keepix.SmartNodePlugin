@@ -11,6 +11,7 @@ namespace Keepix.SmartNodePlugin
         public string rplWalletBalance { get;set; }
         public string nodeCreditBalance { get;set; }
         public bool isRegistered { get;set; }
+        public bool isSmoothing { get;set; }
         public string nodeRPLStakedBalance { get;set; }
         public string nodeRPLStakedEffectiveBalance { get;set; }
         public string nodeRPLStakedBorrowedETHPercentage { get;set; }
