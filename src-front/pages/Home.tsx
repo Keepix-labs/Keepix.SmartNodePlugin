@@ -115,7 +115,7 @@ export default function HomePage() {
                     }
                     return acc;
                   }, {});
-                  if (Object.keys(poolData).length !== 0) {
+                  if (Object.keys(poolData).length > 3) {
                     pools.push({
                       ... poolData,
                       Status: miniPoolStatus,
