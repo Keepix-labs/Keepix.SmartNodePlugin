@@ -80,7 +80,7 @@ namespace Keepix.SmartNodePlugin.Services
                 return $"The minipool cannot be exited at this time. Please try again later.";
             }
             // TODO check the real return.
-            if (result.Contains("Your minipool is now in Initialized status")) {
+            if (result.Contains("Successfully exited minipool")) {
                 return string.Empty;
             }
             return result;

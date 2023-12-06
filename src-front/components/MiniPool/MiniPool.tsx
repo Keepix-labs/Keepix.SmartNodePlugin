@@ -97,25 +97,32 @@ export const MiniPool = ({ index, total, pool, wallet }: any) => {
                 icon="formkit:ethereum"
             >{ pool['RP-deposit'] }</Field>
             </div>
+            <div className="home-row-full" >
+            <Field
+                status="success"
+                title="Validator Status"
+                icon="formkit:ethereum"
+            >{ pool['Validator-active'] === 'yes' ? 'Active' : 'Stopped' }</Field>
+            </div>
             <div className="home-row-2" >
                 <Btn
                     icon="material-symbols:stop"
                     status="gray-black"
                     color="red"
-                    disabled={pool['Status'] !== 'Finalized'}
+                    disabled={!['Finalized', 'Staking'].includes(pool['Status'])}
                     onClick={async () => { await sendExitMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                     >Exit</Btn>
                 <Btn
                     icon="material-symbols:close"
                     status="gray-black"
                     color="orange"
-                    disabled={pool['Status'] !== 'Finalized'}
+                    disabled={!['Finalized'].includes(pool['Status'])}
                     onClick={async () => { await sendCloseMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                 >Close</Btn>
             </div>
             <div className="home-row-2" style={{ textAlign: "center" }} >
-                <div>(Exit staking minipools from the beacon chain)</div>
-                <div>(Withdraw any remaining balance from a minipool and close it)</div>
+                <div>(Exit staking minipools from the beacon chain)<br></br><br></br><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/withdraw" target="_blank">Documentation Link</a></div>
+                <div>(Please wait 27 hours after exiting before closing - Withdraw any remaining balance from a minipool and close it)<br></br><br></br><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/withdraw" target="_blank">Documentation Link</a></div>
             </div>
         </div>
         {open && (

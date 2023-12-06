@@ -163,6 +163,9 @@ export const RplStaking = ({ wallet, status, minipools, backFn }: any) => {
                             }}
                         >Deposit</Btn>
                     </div>
+                    <div className="home-row-full" style={{ textAlign: 'start' }}>
+                        <a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/create-validator#staking-rpl" target="_blank">Documentation Link</a>
+                    </div>
                 </div>
                 <div className="card card-default">
                     <div className="home-row-full">

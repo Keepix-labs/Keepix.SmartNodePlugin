@@ -171,6 +171,10 @@ export const NewMiniPool = ({ wallet, status, minipools, backFn }: any) => {
                         { !miniPoolMinimumStakeRplAmountsQuery.data && (<Loader></Loader>)}
                         { miniPoolMinimumStakeRplAmountsQuery.data && (<div>(You need a minimum of {parseFloat(miniPoolMinimumStakeRplAmountsQuery?.data?.minimumMiniPoolStake) + getNumberOfReservedRPLStaked()} RPL Staked.)</div>) }
                     </div>
+                    <div className="home-row-2" style={{ textAlign: "center" }} >
+                        <div><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/create-validator#depositing-eth-and-creating-a-minipool" target="_blank">Documentation Link</a></div>
+                        <div><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/create-validator#depositing-eth-and-creating-a-minipool" target="_blank">Documentation Link</a></div>
+                    </div>
                 </div>
             </>)}
         </div>

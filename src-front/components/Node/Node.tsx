@@ -6,7 +6,7 @@ import { KEEPIX_API_URL, PLUGIN_API_SUBPATH } from "../../constants";
 import { safeFetch } from "../../lib/utils";
 import Web3 from "web3";
 import { useQuery } from "@tanstack/react-query";
-import { getPluginNodeInformation, postPluginClaimRewards } from "../../queries/api";
+import { getPluginNodeInformation, postPluginClaimRewards, postPluginRegisterNode } from "../../queries/api";
 import BigLoader from "../BigLoader/BigLoader";
 import Loader from "../Loader/Loader";
 import Logo from "../Logo/Logo";
@@ -15,7 +15,8 @@ import BannerAlert from "../BannerAlert/BannerAlert";
 import Popin from "../Popin/Popin";
 
 export const Node = ({ node, wallet, status, minipools }: any) => {
-    const [open, setPopinOpen] = useState(false);
+    const [openClaimRewardsPopin, setClaimRewardsPopin] = useState(false);
+    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [postResult, setPostResult] = useState<any>(undefined);
 
@@ -37,10 +38,19 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
     });
 
     const sendClaimRewards = async () => {
-        setPopinOpen(true);
+        setClaimRewardsPopin(true);
         setLoading(true);
         setPostResult(undefined);
         const result = await postPluginClaimRewards();
+        setLoading(false);
+        setPostResult(result);
+    };
+
+    const sendRegisterNode = async () => {
+        setOpen(true);
+        setLoading(true);
+        setPostResult(undefined);
+        const result = await postPluginRegisterNode();
         setLoading(false);
         setPostResult(result);
     };
@@ -167,6 +177,24 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     >Claim Rewards ({nodeInformationQuery.data?.node?.rewards?.eth ?? "0"} ETH + {nodeInformationQuery.data?.node?.rewards?.rpl ?? "0"} RPL)</Btn>
             </div>
             <div className="home-row-full" >
+                <Btn
+                    icon="eos-icons:system-re-registered"
+                    status="gray-black"
+                    color="yellow"
+                    disabled={!nodeInformationQuery.data?.node || nodeInformationQuery.data?.node.isRegistered }
+                    onClick={async () => { await sendRegisterNode(); }}
+                    >Register Node</Btn>
+            </div>
+            <div className="home-row-full" >
+                <Btn
+                    icon="lets-icons:group"
+                    status="gray-black"
+                    color="yellow"
+                    disabled={!nodeInformationQuery.data?.node || nodeInformationQuery.data?.node.isSmoothing }
+                    onClick={async () => { await sendRegisterNode(); }}
+                    >Join Smoothing Pool</Btn>
+            </div>
+            <div className="home-row-full" >
                 {
                     (status?.NodeState !== 'NODE_STOPPED' && status?.NodeState !== 'NO_STATE') ?
                     <Btn
@@ -183,12 +211,12 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     >Start</Btn>
                 }
             </div>
-            {open && (
+            {openClaimRewardsPopin && (
                 <>
                 <Popin
                     title="Claim Rewards"
                     close={() => {
-                    setPopinOpen(false);
+                    setClaimRewardsPopin(false);
                     }}
                 >
                     {loading === true && (
@@ -196,6 +224,23 @@ export const Node = ({ node, wallet, status, minipools }: any) => {
                     )}
                     {postResult !== undefined && postResult.result !== true && (<BannerAlert status="danger">Claim failed. StackTrace: {postResult.stdOut}</BannerAlert>)}
                     {postResult !== undefined && postResult.result === true && (<BannerAlert status="success">Success - tx hash: {postResult.stdOut}</BannerAlert>)}
+                </Popin>
+                </>
+            )}
+
+            {open && (
+                <>
+                <Popin
+                    title="Node Task"
+                    close={() => {
+                    setOpen(false);
+                    }}
+                >
+                    {loading === true && (
+                        <Loader></Loader>
+                    )}
+                    {postResult !== undefined && postResult.result !== true && (<BannerAlert status="danger">Failed. StackTrace: {postResult.stdOut}</BannerAlert>)}
+                    {postResult !== undefined && postResult.result === true && (<BannerAlert status="success">{postResult.stdOut}</BannerAlert>)}
                 </Popin>
                 </>
             )}
