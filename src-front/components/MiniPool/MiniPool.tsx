@@ -116,13 +116,13 @@ export const MiniPool = ({ index, total, pool, wallet }: any) => {
                     icon="material-symbols:close"
                     status="gray-black"
                     color="orange"
-                    disabled={!['Finalized'].includes(pool['Status'])}
+                    disabled={!['Finalized', 'Staking'].includes(pool['Status'])}
                     onClick={async () => { await sendCloseMiniPool({ MiniPoolAddress: pool['Address'] }); }}
                 >Close</Btn>
             </div>
             <div className="home-row-2" style={{ textAlign: "center" }} >
                 <div>(Exit staking minipools from the beacon chain)<br></br><br></br><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/withdraw" target="_blank">Documentation Link</a></div>
-                <div>(Please wait 27 hours after exiting before closing - Withdraw any remaining balance from a minipool and close it)<br></br><br></br><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/withdraw" target="_blank">Documentation Link</a></div>
+                <div>(Please wait Withdrawable state completed many hours after exiting and you can close - Withdraw any remaining balance from a minipool and close it)<br></br><br></br><a style={{ color: '#6f6fd7' }} href="https://docs.rocketpool.net/guides/node/withdraw" target="_blank">Documentation Link</a></div>
             </div>
         </div>
         {open && (

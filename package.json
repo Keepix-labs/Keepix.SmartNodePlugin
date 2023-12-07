@@ -35,12 +35,12 @@
         "test": "react-app-rewired test",
         "eject": "react-app-rewired eject",
         "p-build-debug": "dotnet publish -c Debug && rm -rf ./dist && cp -r ./bin/Debug/net7.0 ./dist",
-        "p-build-release-osx-x64": "echo ''",
-        "p-build-release-osx-arm64": "echo ''",
-        "p-build-release-linux-x64": "echo ''",
+        "p-build-release-osx-x64": "dotnet publish -c Release --runtime osx-x64",
+        "p-build-release-osx-arm64": "dotnet publish -c Release --runtime osx-arm64",
+        "p-build-release-linux-x64": "dotnet publish -c Release --runtime linux-x64",
         "p-build-release-linux-arm64": "dotnet publish -c Release --runtime linux-arm64",
-        "p-build-release-win-x64": "echo ''",
-        "p-build-release-win-arm64": "echo ''",
+        "p-build-release-win-x64": "dotnet publish -c Release --runtime win-x64",
+        "p-build-release-win-arm64": "dotnet publish -c Release --runtime win-arm64",
         "p-build-all": "npm run p-build-release-osx-x64 && npm run p-build-release-osx-arm64 && npm run p-build-release-linux-x64 && npm run p-build-release-linux-arm64 && npm run p-build-release-win-x64 && npm run p-build-release-win-arm64 && rm -rf ./bin/Release/net7.0/*/publish && rm -rf ./dist && cp -r ./bin/Release/net7.0 ./dist"
     },
     "eslintConfig": {
